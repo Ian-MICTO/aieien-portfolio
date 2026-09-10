@@ -1,0 +1,70 @@
+---
+import { Image } from "astro:assets";
+import panelImgTop from "../../assets/images/about-houtarou.png";
+import orekiFull from "../../assets/images/Houtarou-cutout-full.png";
+/* src/components/sections/About.astro */
+---
+
+<section
+  id="about"
+  class="relative z-0 w-full min-h-screen md:w-screen md:min-w-screen md:h-screen md:shrink-0 bg-white border-b-2 md:border-b-0 md:border-r-2 border-black flex flex-col pl-0 md:pl-15"
+>
+  <!-- Halftone Effect Background Across Whole Section -->
+  <div class="absolute inset-0 opacity-10 bg-[radial-gradient(#000_1px,transparent_1px)] bg-size-[8px_8px] pointer-events-none z-0"></div>
+
+  <span data-pagefind-meta="title" style="display: none;">About</span>
+
+  <!-- Section Header Bar -->
+  <div class="relative z-10 px-4 sm:px-6 pt-16 md:pt-4 pb-3 sm:pb-4 flex items-center justify-between shrink-0 bg-transparent">
+    <div class="flex items-center gap-3">
+      <span class="text-xs font-mono font-bold tracking-widest uppercase bg-black text-white px-2 py-0.5">
+        Ch. 01
+      </span>
+      <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight uppercase">
+        About
+      </h2>
+    </div>
+    <span class="text-xs font-mono text-neutral-500 uppercase tracking-widest hidden sm:inline">
+      Ai Eien / Story & Bio
+    </span>
+  </div>
+
+  <!-- Content Area -->
+  <div class="relative z-10 flex-1 w-full min-h-0 overflow-hidden p-3 sm:p-4 md:p-6 flex items-center justify-center">
+    <!-- Responsive Grid: 2 columns x 4 rows on mobile, 6 columns x 6 rows on desktop -->
+    <div class="relative z-10 w-full h-full grid grid-cols-2 grid-rows-4 md:grid-cols-6 md:grid-rows-6 gap-2 sm:gap-3">
+      <!-- Top Panel 1 (spans full width on mobile, 4 cols & 2 rows on desktop) -->
+      <div class="col-span-2 row-span-1 md:col-span-4 md:row-span-2 md:col-start-1 md:row-start-1 border-2 border-black bg-white overflow-hidden p-3 sm:p-4">
+        <p class="font-black text-lg sm:text-xl">PANEL 1</p>
+      </div>
+
+      <!-- Tall Panel 2 (below Panel 1 on right on mobile, right tall panel on desktop) -->
+      <div class="col-start-2 row-start-2 row-span-2 col-span-1 md:col-start-5 md:row-start-1 md:col-span-2 md:row-span-4 border-2 border-black bg-white overflow-hidden p-3 sm:p-4">
+        <p class="font-black text-lg sm:text-xl">PANEL 2</p>
+
+        <Image
+          src={panelImgTop}
+          alt="Character Pop-out"
+          class="absolute -bottom-6 -right-6 h-full w-auto max-w-none z-30 pointer-events-none drop-shadow-[8px_8px_0px_rgba(0,0,0,1)]"
+        />
+      </div>
+
+      <!-- Panel 3 (stacked top-left on mobile, mid-left 1 on desktop) -->
+      <div class="col-start-1 row-start-2 col-span-1 row-span-1 md:col-start-1 md:row-start-3 md:col-span-2 md:row-span-2 border-2 border-black bg-white overflow-hidden p-3 sm:p-4">
+        <p class="font-bold text-sm sm:text-base">PANEL 3</p>
+      </div>
+
+      <!-- Panel 4 (stacked bottom-left on mobile, mid-left 2 on desktop) -->
+      <div class="col-start-1 row-start-3 col-span-1 row-span-1 md:col-start-3 md:row-start-3 md:col-span-2 md:row-span-2 border-2 border-black bg-white overflow-hidden p-3 sm:p-4">
+        <p class="font-bold text-sm sm:text-base">PANEL 4</p>
+      </div>
+
+      <!-- Full-width banner Climax Panel (spans 2 cols on mobile, 6 cols on desktop) -->
+      <div class="col-start-1 row-start-4 col-span-2 row-span-1 md:col-start-1 md:row-start-5 md:col-span-6 md:row-span-2 border-2 border-black bg-white overflow-hidden p-3 sm:p-4">
+        <p class="font-black text-xl sm:text-2xl">CLIMAX PANEL</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+

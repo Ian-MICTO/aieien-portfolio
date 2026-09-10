@@ -1,0 +1,21 @@
+{
+  "name": "aieien-portfolio",
+  "private": true,
+  "scripts": {
+    "dev": "concurrently -k -c \"#a855f7,#38bdf8\" --names \"strapi,astro\" \"pnpm run dev:backend\" \"pnpm run dev:web\"",
+    "dev:backend": "pnpm --filter backend develop",
+    "dev:web": "pnpm --filter web dev",
+    "build": "pnpm --filter web build && pnpm --filter backend build",
+    "build:backend": "pnpm --filter backend build",
+    "build:web": "pnpm --filter web build"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "better-sqlite3",
+      "sharp"
+    ]
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  }
+}

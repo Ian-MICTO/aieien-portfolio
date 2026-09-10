@@ -1,0 +1,68 @@
+---
+import { Image } from "astro:assets";
+// import panelImgTop from "../../assets/images/Houtarou-cutout-full.png";
+import panelImgTop from "../../assets/images/Oreki-w-bg.png";
+/* src/components/sections/Panels-1.astro */
+const pageName = "Panels 1";
+---
+
+<section
+  id="panels1"
+  class="relative z-0 w-full min-h-screen md:w-screen md:min-w-screen md:h-screen md:shrink-0 bg-white border-b-2 md:border-b-0 md:border-r-2 border-black flex flex-col pl-0 md:pl-15"
+>
+  <span data-pagefind-meta="title" style="display: none;">{pageName}</span>
+
+  <!-- Section Header Bar -->
+  <div class="px-4 sm:px-6 pt-16 md:pt-4 pb-3 sm:pb-4 flex items-center justify-between shrink-0 bg-white">
+    <div class="flex items-center gap-3">
+      <span class="text-xs font-mono font-bold tracking-widest uppercase bg-black text-white px-2 py-0.5">
+        Ch. 01
+      </span>
+      <h2 class="text-3xl md:text-4xl font-bold tracking-tight uppercase">
+        {pageName}
+      </h2>
+    </div>
+    <span class="text-xs font-mono text-neutral-500 uppercase tracking-widest hidden sm:inline">
+      Ai Eien / Story & Bio
+    </span>
+  </div>
+
+  <!-- Content Area -->
+  <div class="flex-1 w-full min-h-0 overflow-hidden p-3 sm:p-4 md:p-6 flex items-center justify-center">
+    <div class="relative flex flex-col h-full w-full overflow-hidden bg-neutral-100 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] p-3 sm:p-4">
+      <!-- Halftone Effect Background -->
+      <div class="absolute inset-0 opacity-10 bg-[radial-gradient(#000_1px,transparent_1px)] bg-size-[8px_8px] pointer-events-none"></div>
+
+      <div class="relative z-10 w-full md:w-1/2 h-full flex flex-col py-2 px-1">
+        <!-- Slant Top -->
+        <div
+          class="relative w-full h-1/2 bg-black overflow-hidden p-0.5"
+          style="clip-path: polygon(0 0, 100% 0, 100% 88%, 0 100%);"
+        >
+          <div
+            class="h-full w-full bg-white overflow-hidden p-4 relative"
+            style="clip-path: polygon(0 0, 100% 0, 100% 88%, 0 100%);"
+          >
+            <Image
+              src={panelImgTop}
+              alt="Manga Action Top"
+              class="absolute inset-0 w-full h-full object-cover object-center"
+            />
+          </div>
+        </div>
+
+        <!-- Slant Bottom -->
+        <div
+          class="relative w-full h-1/2 -mt-6 sm:-mt-8 bg-black overflow-hidden p-0.5"
+          style="clip-path: polygon(0 12%, 100% 0, 100% 100%, 0 100%);"
+        >
+          <div
+            class="w-full h-full bg-white overflow-hidden p-6"
+            style="clip-path: polygon(0 12%, 100% 0, 100% 100%, 0 100%);"
+          >
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

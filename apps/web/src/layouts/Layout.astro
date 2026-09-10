@@ -1,0 +1,149 @@
+---
+import "../styles/global.css";
+import Navbar from "../components/Navbar";
+const { title } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<link rel="icon" href="/favicon.ico" />
+		<meta name="generator" content={Astro.generator} />
+		<title>
+			{title ? title + " | Ai Eien" : 'Ai Eien Portfolio "ETERNAL LOVE"'}
+		</title>
+		<link
+			href="https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,100..900;1,100..900&display=swap"
+			rel="stylesheet"
+		/>
+		<link
+			rel="stylesheet"
+			href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Jost:wght@400;900&display=swap"
+		/>
+	</head>
+	<body class="overflow-x-hidden w-full min-h-screen bg-white">
+		<Navbar client:load />
+		<div id="scroll-wrapper" class="relative w-full min-h-screen overflow-visible md:h-screen md:overflow-hidden">
+			<main
+				id="horizontal-track"
+				class="flex flex-col w-full min-h-screen md:flex-row md:flex-nowrap md:w-max md:h-screen md:will-change-transform"
+			>
+				<slot />
+			</main>
+		</div>
+
+		<script>
+      import Lenis from "lenis";
+      import gsap from "gsap";
+      import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+      gsap.registerPlugin(ScrollTrigger);
+
+      // 1. Initialize Lenis Smooth Scroll
+      const lenis = new Lenis({
+        duration: 1.2,
+        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+        smoothWheel: true,
+      });
+
+      lenis.on("scroll", ScrollTrigger.update);
+      gsap.ticker.add((time) => {
+        lenis.raf(time * 1000);
+      });
+      gsap.ticker.lagSmoothing(0);
+
+      // 2. Responsive Scroll with gsap.matchMedia()
+      const track = document.getElementById("horizontal-track");
+      const wrapper = document.getElementById("scroll-wrapper");
+
+      if (track && wrapper) {
+        const mm = gsap.matchMedia();
+
+        // Desktop: Horizontal Scroll Pinning (>= 768px)
+        mm.add("(min-width: 768px)", () => {
+          const getScrollAmount = () => track.scrollWidth - window.innerWidth;
+
+          gsap.to(track, {
+            x: () => -getScrollAmount(),
+            ease: "none",
+            scrollTrigger: {
+              trigger: wrapper,
+              pin: true,
+              scrub: 1,
+              start: "top top",
+              end: () => `+=${getScrollAmount()}`,
+              invalidateOnRefresh: true,
+            },
+          });
+
+          // Parallax Targets Inside Panels
+          gsap.utils.toArray<HTMLElement>("[data-parallax]").forEach((el) => {
+            const speed = parseFloat(el.dataset.parallax || "0.2");
+            gsap.to(el, {
+              x: () => -(getScrollAmount() * speed),
+              ease: "none",
+              scrollTrigger: {
+                trigger: wrapper,
+                start: "top top",
+                end: () => `+=${getScrollAmount()}`,
+                scrub: 1,
+              },
+            });
+          });
+        });
+
+        // Mobile: Natural Vertical Scroll (< 768px)
+        mm.add("(max-width: 767px)", () => {
+          gsap.set(track, { clearProps: "transform,willChange" });
+          gsap.set("[data-parallax]", { clearProps: "transform" });
+        });
+      }
+
+      // 3. Anchor Navigation Handler for both Horizontal (Desktop) and Vertical (Mobile)
+      function handleAnchorScroll(targetId: string) {
+        if (!targetId || targetId === "#") return;
+        const targetEl = document.querySelector(targetId) as HTMLElement | null;
+        if (!targetEl) return;
+
+        if (window.innerWidth >= 768 && track) {
+          const targetOffset = targetEl.offsetLeft;
+          lenis.scrollTo(targetOffset, {
+            duration: 1.2,
+          });
+        } else {
+          lenis.scrollTo(targetEl, {
+            offset: -60,
+            duration: 1.2,
+          });
+        }
+      }
+
+      // Intercept anchor clicks
+      document.addEventListener("click", (e) => {
+        const anchor = (e.target as HTMLElement).closest('a[href^="#"]');
+        if (anchor) {
+          const href = anchor.getAttribute("href");
+          if (href && href.startsWith("#") && href.length > 1) {
+            e.preventDefault();
+            handleAnchorScroll(href);
+          }
+        }
+      });
+
+      // Prevent window from getting stuck at non-zero horizontal scroll on desktop
+      window.addEventListener("scroll", () => {
+        if (window.innerWidth >= 768 && window.scrollX !== 0) {
+          window.scrollTo(0, window.scrollY);
+        }
+      });
+
+      window.addEventListener("load", () => ScrollTrigger.refresh());
+      window.addEventListener("resize", () => ScrollTrigger.refresh());
+    </script>
+	</body>
+</html>
+
+
