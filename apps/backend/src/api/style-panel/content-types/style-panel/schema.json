@@ -1,0 +1,34 @@
+{
+  "kind": "collectionType",
+  "collectionName": "style_panels",
+  "info": {
+    "singularName": "style-panel",
+    "pluralName": "style-panels",
+    "displayName": "Style Panels"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "title": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "panelNumber": {
+      "type": "string"
+    },
+    "image": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ]
+    }
+  }
+}
