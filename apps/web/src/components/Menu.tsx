@@ -24,8 +24,8 @@ export default function Menu({ onClose }: MenuProps): JSX.Element {
     },
     {
       id: "4",
-      title: "Album",
-      href: "#album",
+      title: "Works",
+      href: "#works",
     },
     {
       id: "5",

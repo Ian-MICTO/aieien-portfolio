@@ -1,8 +1,35 @@
 ---
-import { Image } from "astro:assets";
-import panelImgTop from "../../assets/images/Oreki-w-bg.png";
 import { getStylePanels, getStrapiMediaUrl } from "@/lib/strapi";
-import StylePanel from "../StylePanel";
+import StylePanel from "@/components/StylePanel";
+
+interface PanelStyleConfig {
+  className: string;
+  clipPath: string;
+}
+
+// Styling configurations keyed by panel identifier ("01", "02", "03", "04")
+const STYLE_PANEL_CONFIGS: Record<string, PanelStyleConfig> = {
+  "01": {
+    className: "w-[30%] h-[103%] -mt-6 z-10",
+    clipPath: "polygon(0 0, 100% 0, 82% 100%, 0 100%)",
+  },
+  "02": {
+    className: "w-[22%] h-[98%] mt-15 -ml-3 z-20",
+    clipPath: "polygon(18% 0, 100% 0, 80% 100%, 0% 100%)",
+  },
+  "03": {
+    className: "w-[32%] h-[106%] -mt-20 -ml-4 z-30",
+    clipPath: "polygon(20% 0, 100% 0, 74% 100%, 0% 100%)",
+  },
+  "04": {
+    className: "w-[24%] h-[97%] mt-16 -ml-4 z-40",
+    clipPath: "polygon(26% 0, 100% 0, 100% 100%, 0 100%)",
+  },
+};
+
+const getPanelClasses = (panelNumber: string) => {
+  return STYLE_PANEL_CONFIGS[panelNumber] || STYLE_PANEL_CONFIGS["01"];
+}
 
 const panels = await getStylePanels();
 
@@ -65,15 +92,21 @@ const pageName = "Styles";
 
     <!-- Desktop Layout -->
     <div class="hidden md:flex flex-1 w-full h-full min-h-0 relative z-10 flex-row items-center justify-center px-2">
-      {panels.map((panel) => {
+      {panels.map((panel, index) => {
         const fullImageUrl = getStrapiMediaUrl(panel.image?.url);
+        const panelClasses = getPanelClasses(panel.panelNumber);
+          // (panel.panelNumber && STYLE_PANEL_CONFIGS[panel.panelNumber])
+
+        const panelClassName = panelClasses.className;
+        const panelClipPath = panelClasses.clipPath;
+
         return (
           <StylePanel
             client:load
             title={panel.title}
             description={panel.description}
-            className={panel.mainClass || ""}
-            clipPath={panel.clipClass || ""}
+            className={panelClassName}
+            clipPath={panelClipPath}
           >
             {fullImageUrl ? (
               <img

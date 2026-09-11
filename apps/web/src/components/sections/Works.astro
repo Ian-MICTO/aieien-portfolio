@@ -1,0 +1,68 @@
+---
+import { getStrapiMediaUrl, getWorks } from "@/lib/strapi";
+import WorkBox from "@/components/Work-box";
+
+const works = await getWorks();
+const pageName = "Works";
+---
+
+<section
+  id="works"
+  class="relative z-0 w-full min-h-screen md:w-screen md:min-w-screen md:h-screen md:shrink-0 border-b-2 md:border-b-0 md:border-r-2 border-black flex flex-col pl-0 md:pl-15 overflow-y-auto"
+>
+  <span data-pagefind-meta="title" style="display: none;">{pageName}</span>
+
+  <!-- Section Header Bar -->
+  <div class="relative z-10 px-4 sm:px-6 pt-16 md:pt-4 pb-3 sm:pb-4 flex items-center justify-between shrink-0 bg-transparent">
+    <div class="flex items-center gap-3">
+      <span class="text-xs font-mono font-bold tracking-widest uppercase bg-black text-white px-2 py-0.5">
+        Ch. 04
+      </span>
+      <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight uppercase">
+        {pageName}
+      </h2>
+    </div>
+    <span class="z-10 text-xs font-mono text-neutral-800 uppercase tracking-wide hidden sm:inline font-bold">
+      Selected Works & Products
+    </span>
+  </div>
+
+  <!-- Grid Content Area -->
+  <div class="flex-1 p-4 sm:p-6 overflow-y-auto">
+    <div class="grid w-full grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
+      {works && works.length > 0 ? (
+        works.map((work) => {
+          const fullImageUrl = getStrapiMediaUrl(work.image?.url);
+          return (
+            <WorkBox
+              client:visible
+              title={work.title || "UNTITLED WORK"}
+              imageUrl={fullImageUrl}
+              alt={work.image?.alternativeText || work.title}
+            />
+          );
+        })
+      ) : (
+        /* Preview / Placeholder items if Strapi works collection is empty */
+        <>
+          <WorkBox
+            title="POSTCARD C"
+            subtitle="1,200 Yen"
+          />
+          <WorkBox
+            title="CHANGING CLEAR FILE"
+            subtitle="2,000 Yen"
+          />
+          <WorkBox
+            title="AirPods CASE"
+            subtitle="3,500 Yen"
+          />
+          <WorkBox
+            title="ACRYLIC STAND"
+            subtitle="2,500 Yen"
+          />
+        </>
+      )}
+    </div>
+  </div>
+</section>
