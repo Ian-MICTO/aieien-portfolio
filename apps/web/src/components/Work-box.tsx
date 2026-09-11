@@ -43,7 +43,7 @@ export default function WorkBox({
       </div>
 
       {/* Smooth White Gradient Fog / Fade Overlay matching theme */}
-      <div className="absolute inset-x-0 bottom-0 h-1/2 pointer-events-none bg-gradient-to-t from-white via-white/85 via-45% to-transparent" />
+      <div className="absolute inset-x-0 bottom-0 h-1/2 pointer-events-none bg-linear-to-t from-white via-white/85 via-45% to-transparent" />
 
       {/* Bottom Text Details directly on top of the Gradient Fog */}
       <div className="absolute bottom-0 inset-x-0 p-3.5 sm:p-4 z-10 flex flex-col justify-end pointer-events-none">

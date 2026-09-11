@@ -7,7 +7,7 @@ export default function Navbar(): JSX.Element {
   return (
     <>
       {/* THE VERTICAL SPINE (Desktop) / TOP BAR (Mobile) */}
-      <nav className="fixed top-0 left-0 border-b-2 border-black bg-white z-[110] flex w-full justify-between md:flex-col-reverse md:h-full md:w-15 md:border-r-2 md:pb-9">
+      <nav className="fixed top-0 left-0 border-b-2 border-black bg-white z-110 flex w-full justify-between md:flex-col-reverse md:h-full md:w-15 md:border-r-2 md:pb-9">
         <span className="hidden md:block md:-rotate-90 md:whitespace-nowrap text-black">
           Ai Eien Art Portfolio
         </span>
