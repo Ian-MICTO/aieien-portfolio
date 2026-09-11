@@ -1,5 +1,6 @@
 import type { StylePanelData } from "@/types/style-panel";
 import type { WorkData } from "@/types/work";
+import type { ContactData } from "@/types/connect";
 
 function getStrapiBaseUrl(): string {
   return (
@@ -116,3 +117,37 @@ export async function getWorks(): Promise<WorkData[]> {
     return [];
   }
 }
+
+export async function getContacts(): Promise<ContactData[]> {
+  const strapiUrl = getStrapiBaseUrl();
+
+  try {
+    const res = await fetch(
+      `${strapiUrl}/api/contacts?populate=*&sort=createdAt:asc`,
+      {
+        headers: getStrapiHeaders(),
+      },
+    );
+
+    if (!res.ok) {
+      if (res.status === 401 || res.status === 403) {
+        console.error(
+          `Strapi API Authentication Error (${res.status} ${res.statusText}): Access denied. Please ensure STRAPI_API_TOKEN is set in your .env file and has read permissions for Contacts.`,
+        );
+      } else {
+        console.error(
+          `Failed to fetch contacts from Strapi: ${res.status} ${res.statusText}`,
+        );
+      }
+      return [];
+    }
+
+    const json = await res.json();
+    const data: ContactData[] = json.data || [];
+    return data;
+  } catch (error) {
+    console.error("Error fetching Strapi contacts: ", error);
+    return [];
+  }
+}
+

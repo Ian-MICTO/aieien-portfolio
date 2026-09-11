@@ -1,8 +1,186 @@
+---
+import { getContacts } from "@/lib/strapi";
+import { Header } from "@/components/Header";
+
+const contacts = await getContacts();
+const pageName = "Connect";
+---
+
 <section
-    id="connect"
-    class="relative z-0 w-full min-h-screen md:w-screen md:min-w-screen md:h-screen md:shrink-0 bg-white border-b-2 md:border-b-0 md:border-r-2 border-black flex flex-col pl-0 md:pl-15"
+  id="connect"
+  class="relative z-0 w-full min-h-screen md:w-screen md:min-w-screen md:h-screen md:shrink-0 bg-white border-b-2 md:border-b-0 md:border-r-2 border-black flex flex-col pl-0 md:pl-15 overflow-y-auto"
 >
-    <div>
-        Connect
+  <!-- Halftone Effect Background Across Whole Section -->
+  <div class="absolute inset-0 opacity-10 bg-[radial-gradient(#000_1px,transparent_1px)] bg-size-[8px_8px] pointer-events-none z-0"></div>
+
+  <span data-pagefind-meta="title" style="display: none;">{pageName}</span>
+
+  <!-- Section Header Bar -->
+  <Header
+    chapter="Ch. 05"
+    label="Connect"
+    caption="Contacts & Credits"
+  />
+
+  <!-- Main Content Area: Editorial / Credits Layout -->
+  <div class="relative z-10 flex-1 w-full min-h-0 p-6 sm:p-8 md:p-12 flex flex-col justify-between overflow-y-auto">
+    
+    <!-- Credits Columns Grid -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-8 sm:gap-10 lg:gap-12 w-full max-w-7xl">
+      
+      <!-- Primary / Highlight Column (Leftmost) -->
+      <div class="col-span-1 sm:col-span-2 md:col-span-1 lg:col-span-2 flex flex-col gap-6">
+        <div>
+          <p class="text-xs font-mono font-bold tracking-widest text-neutral-500 uppercase mb-1">
+            主催・イラストレーション / Artist
+          </p>
+          <h3 class="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight uppercase text-black font-sans">
+            Ai Eien
+          </h3>
+        </div>
+
+        <div class="flex flex-col gap-4 text-xs sm:text-sm font-mono">
+          <div>
+            <span class="block text-neutral-400 font-bold uppercase tracking-wider text-[11px]">
+              プロジェクト / Project
+            </span>
+            <p class="font-bold text-black uppercase mt-0.5">
+              ETERNAL LOVE “Ai Eien Portfolio”
+            </p>
+          </div>
+
+          <div>
+            <span class="block text-neutral-400 font-bold uppercase tracking-wider text-[11px]">
+              活動拠点 / Location
+            </span>
+            <p class="text-neutral-700 mt-0.5">
+              Tokyo & Digital Cyberspace
+            </p>
+          </div>
+
+          <div>
+            <span class="block text-neutral-400 font-bold uppercase tracking-wider text-[11px]">
+              ご依頼・連絡先 / Contact
+            </span>
+            <p class="text-neutral-700 mt-0.5">
+              Open for illustrations & concept art inquiries
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Column 2: Socials & Networks (Fetched dynamically from Strapi) -->
+      <div class="flex flex-col gap-5">
+        <h4 class="text-xs font-mono font-bold tracking-wider text-black">
+          &lt;ソーシャル / Social Networks&gt;
+        </h4>
+
+        <div class="flex flex-col gap-4">
+          {contacts && contacts.length > 0 ? (
+            contacts.map((contact) => (
+              <div class="flex flex-col group">
+                <span class="text-[11px] font-mono font-bold text-neutral-400 uppercase tracking-wide">
+                  {contact.title}
+                </span>
+                {contact.link ? (
+                  <a
+                    href={contact.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="text-xs sm:text-sm font-mono font-semibold text-black hover:underline inline-flex items-center gap-1 transition-colors mt-0.5"
+                  >
+                    <span>{contact.description || contact.link}</span>
+                    <span class="text-[10px] opacity-70 group-hover:translate-x-0.5 transition-transform">↗</span>
+                  </a>
+                ) : (
+                  <span class="text-xs sm:text-sm font-mono text-neutral-800 mt-0.5">
+                    {contact.description || "—"}
+                  </span>
+                )}
+              </div>
+            ))
+          ) : (
+            <>
+              <div class="flex flex-col">
+                <span class="text-[11px] font-mono font-bold text-neutral-400 uppercase tracking-wide">
+                  Instagram
+                </span>
+                <span class="text-xs sm:text-sm font-mono text-neutral-700 mt-0.5">
+                  @ueian_
+                </span>
+              </div>
+              <div class="flex flex-col">
+                <span class="text-[11px] font-mono font-bold text-neutral-400 uppercase tracking-wide">
+                  Facebook
+                </span>
+                <span class="text-xs sm:text-sm font-mono text-neutral-700 mt-0.5">
+                  Ai Eien
+                </span>
+              </div>
+            </>
+          )}
+        </div>
+      </div>
+
+      <!-- Column 3: Production & Collaborations -->
+      <div class="flex flex-col gap-5">
+        <h4 class="text-xs font-mono font-bold tracking-wider text-black">
+          &lt;制作・協力 / Production&gt;
+        </h4>
+
+        <div class="flex flex-col gap-4 text-xs sm:text-sm font-mono">
+          <div>
+            <span class="text-[11px] font-mono font-bold text-neutral-400 uppercase tracking-wide block">
+              ディレクション / Direction
+            </span>
+            <span class="text-neutral-800 mt-0.5 block">
+              Ai Eien Studio
+            </span>
+          </div>
+
+          <div>
+            <span class="text-[11px] font-mono font-bold text-neutral-400 uppercase tracking-wide block">
+              ウェブ開発 / Web Production
+            </span>
+            <span class="text-neutral-800 mt-0.5 block">
+              Astro & Tailwind CSS
+            </span>
+          </div>
+
+          <div>
+            <span class="text-[11px] font-mono font-bold text-neutral-400 uppercase tracking-wide block">
+              CMS バックエンド / CMS Backend
+            </span>
+            <span class="text-neutral-800 mt-0.5 block">
+              Strapi Headless CMS
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Column 4: Special Thanks -->
+      <div class="flex flex-col gap-5">
+        <h4 class="text-xs font-mono font-bold tracking-wider text-black">
+          &lt;スペシャルサンクス / Special Thanks&gt;
+        </h4>
+
+        <div class="flex flex-col gap-2.5 text-xs sm:text-sm font-mono text-neutral-800">
+          <p>Mika Pikazo</p>
+          <p>Kyoto Animation</p>
+          <p>Kadokawa</p>
+          <p>Hyouka Production Committee</p>
+          <p>All Friends & Supporters</p>
+        </div>
+      </div>
+
     </div>
+
+    <!-- Bottom Copyright Line (Matching Reference Image) -->
+    <div class="pt-10 md:pt-6 pb-2">
+      <p class="text-xs font-mono text-neutral-500 tracking-wider">
+        © 2026 Ai Eien Portfolio “ETERNAL LOVE”
+      </p>
+    </div>
+
+  </div>
 </section>

@@ -1,6 +1,7 @@
 ---
 import { getStylePanels, getStrapiMediaUrl } from "@/lib/strapi";
 import StylePanel from "@/components/StylePanel";
+import { Header } from "@/components/Header";
 
 interface PanelStyleConfig {
   className: string;
@@ -38,7 +39,7 @@ const pageName = "Styles";
 
 <section
   id="style"
-  class="relative z-0 w-full min-h-screen md:w-screen md:min-w-screen md:h-screen md:shrink-0 bg-white border-b-2 md:border-b-0 md:border-r-2 border-black flex flex-col pl-0 md:pl-15"
+  class="relative z-0 w-full min-h-screen md:w-screen md:min-w-screen md:h-screen md:shrink-0 bg-white border-b-2 md:border-b-0 md:border-r-2 border-black flex flex-col pl-0 md:pl-15 overflow-hidden"
 >
   <!-- Halftone Effect Background Across Whole Page -->
   <div class="absolute inset-0 opacity-10 bg-[radial-gradient(#000_1px,transparent_1px)] bg-size-[8px_8px] pointer-events-none z-0"></div>
@@ -46,22 +47,14 @@ const pageName = "Styles";
   <span data-pagefind-meta="title" style="display: none;">{pageName}</span>
 
   <!-- Section Header Bar -->
-  <div class="relative z-10 px-4 sm:px-6 pt-16 md:pt-4 pb-3 sm:pb-4 flex items-center justify-between shrink-0 bg-transparent">
-    <div class="flex items-center gap-3">
-      <span class="text-xs font-mono font-bold tracking-widest uppercase bg-black text-white px-2 py-0.5">
-        Ch. 03
-      </span>
-      <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight uppercase">
-        Styles
-      </h2>
-    </div>
-    <span class="z-10 text-xs font-mono text-neutral-500 uppercase tracking-wide hidden sm:inline">
-      Art Styles / Production
-    </span>
-  </div>
+  <Header
+    chapter="Ch. 03"
+    label="Styles"
+    caption="Art Styles / Production"
+   />
 
   <!-- Content Area -->
-  <div class="relative z-10 flex-1 w-full min-h-0 overflow-visible md:overflow-hidden p-3 sm:p-4 md:p-6 flex flex-col">
+  <div class="relative z-10 flex-1 w-full min-h-0 overflow-visible md:overflow-visible p-3 sm:p-4 md:p-6 flex flex-col justify-center">
 
     <!-- Mobile Layout: Full-Width Stacked Landscape Panels (Reference Style) -->
     <div class="flex md:hidden flex-col gap-6 w-full relative z-10 pb-8">
