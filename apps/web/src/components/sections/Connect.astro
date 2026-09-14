@@ -1,9 +1,12 @@
 ---
 import { getContacts } from "@/lib/strapi";
 import { Header } from "@/components/Header";
+import { SocialLink } from "../social-link";
+import { SiInstagram, SiFacebook } from '@icons-pack/react-simple-icons';
 
 const contacts = await getContacts();
 const pageName = "Connect";
+const mikaPikazoSite = "https://revenge-pop.mikapikazo.info/";
 ---
 
 <section
@@ -32,9 +35,9 @@ const pageName = "Connect";
       <div class="col-span-1 sm:col-span-2 md:col-span-1 lg:col-span-2 flex flex-col gap-6">
         <div>
           <p class="text-xs font-mono font-bold tracking-widest text-neutral-500 uppercase mb-1">
-            主催・イラストレーション / Artist
+           あい えいえん ・イラストレーション / Artist
           </p>
-          <h3 class="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight uppercase text-black font-sans">
+          <h3 class="text-3xl sm:text-4xl md:text-5xl font-black tracking-normal uppercase text-black font-sans">
             Ai Eien
           </h3>
         </div>
@@ -51,16 +54,16 @@ const pageName = "Connect";
 
           <div>
             <span class="block text-neutral-400 font-bold uppercase tracking-wider text-[11px]">
-              活動拠点 / Location
+              場所 / Location
             </span>
             <p class="text-neutral-700 mt-0.5">
-              Tokyo & Digital Cyberspace
+              Philippines & Digital Cyberspace
             </p>
           </div>
 
           <div>
             <span class="block text-neutral-400 font-bold uppercase tracking-wider text-[11px]">
-              ご依頼・連絡先 / Contact
+              コンタクト / Contact
             </span>
             <p class="text-neutral-700 mt-0.5">
               Open for illustrations & concept art inquiries
@@ -75,29 +78,34 @@ const pageName = "Connect";
           &lt;ソーシャル / Social Networks&gt;
         </h4>
 
-        <div class="flex flex-col gap-4">
+        <div class="flex flex-col">
           {contacts && contacts.length > 0 ? (
             contacts.map((contact) => (
-              <div class="flex flex-col group">
-                <span class="text-[11px] font-mono font-bold text-neutral-400 uppercase tracking-wide">
-                  {contact.title}
-                </span>
-                {contact.link ? (
-                  <a
-                    href={contact.link}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    class="text-xs sm:text-sm font-mono font-semibold text-black hover:underline inline-flex items-center gap-1 transition-colors mt-0.5"
-                  >
-                    <span>{contact.description || contact.link}</span>
-                    <span class="text-[10px] opacity-70 group-hover:translate-x-0.5 transition-transform">↗</span>
-                  </a>
-                ) : (
-                  <span class="text-xs sm:text-sm font-mono text-neutral-800 mt-0.5">
-                    {contact.description || "—"}
-                  </span>
-                )}
-              </div>
+              // <div class="flex flex-col group">
+              //   <span class="text-[11px] font-mono font-bold text-neutral-400 uppercase tracking-wide">
+              //     {contact.title}
+              //   </span>
+              //   {contact.link ? (
+              //     <a
+              //       href={contact.link}
+              //       target="_blank"
+              //       rel="noopener noreferrer"
+              //       class="text-xs sm:text-sm font-mono font-semibold text-black hover:underline inline-flex items-center gap-1 transition-colors mt-0.5"
+              //     >
+              //       <span>{contact.description || contact.link}</span>
+              //       <span class="text-[10px] opacity-70 group-hover:translate-x-0.5 transition-transform">↗</span>
+              //     </a>
+              //   ) : (
+              //     <span class="text-xs sm:text-sm font-mono text-neutral-800 mt-0.5">
+              //       {contact.description || "—"}
+              //     </span>
+              //   )}
+              // </div>
+              <SocialLink
+                icon={contact.title === "Instagram" ? SiInstagram : SiFacebook}
+                label={contact.description!}
+                link={contact.link!}
+            />
             ))
           ) : (
             <>
@@ -134,7 +142,7 @@ const pageName = "Connect";
               ディレクション / Direction
             </span>
             <span class="text-neutral-800 mt-0.5 block">
-              Ai Eien Studio
+              Ai Eien Team
             </span>
           </div>
 
@@ -152,7 +160,7 @@ const pageName = "Connect";
               CMS バックエンド / CMS Backend
             </span>
             <span class="text-neutral-800 mt-0.5 block">
-              Strapi Headless CMS
+              Strapi
             </span>
           </div>
         </div>
@@ -164,13 +172,21 @@ const pageName = "Connect";
           &lt;スペシャルサンクス / Special Thanks&gt;
         </h4>
 
-        <div class="flex flex-col gap-2.5 text-xs sm:text-sm font-mono text-neutral-800">
-          <p>Mika Pikazo</p>
-          <p>Kyoto Animation</p>
-          <p>Kadokawa</p>
-          <p>Hyouka Production Committee</p>
-          <p>All Friends & Supporters</p>
+        <div class="flex flex-col text-xs sm:text-sm font-mono">
+          <!-- <p>Mika Pikazo</p> -->
+           <a
+                    href={mikaPikazoSite}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="text-xs sm:text-sm font-mono font-semibold text-black hover:text-cyan-500 hover:underline inline-flex items-center gap-1 transition-colors mt-0.5"
+                  >
+                  <span>Mika Pikazo</span>
+           </a>
+           <p class="text-neutral-400 mt-0.5">
+              (Concept inspiration)
+            </p>
         </div>
+        
       </div>
 
     </div>

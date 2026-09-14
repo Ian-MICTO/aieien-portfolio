@@ -1,6 +1,145 @@
+---
+import { Header } from "../Header";
+import { SocialLink } from "../social-link";
+import { SiInstagram, SiFacebook } from '@icons-pack/react-simple-icons';
+---
+
 <section
-    id="info"
-    class="relative z-0 w-full min-h-screen md:w-screen md:min-w-screen md:h-screen md:shrink-0 bg-white border-b-2 md:border-b-0 md:border-r-2 border-black flex flex-col pl-0 md:pl-15"
+  id="info"
+  class="relative z-0 w-full min-h-screen md:w-screen md:min-w-screen md:h-screen md:shrink-0 bg-white border-b-2 md:border-b-0 md:border-r-2 border-black flex flex-col pl-0 md:pl-15 overflow-hidden"
 >
-    <div>Info</div>
+  <!-- Halftone Effect Background Across Whole Section -->
+  <div class="absolute inset-0 opacity-10 bg-[radial-gradient(#000_1px,transparent_1px)] bg-size-[8px_8px] pointer-events-none z-0"></div>
+
+  <span data-pagefind-meta="title" style="display: none;">INFO</span>
+
+  <!-- Section Header Bar -->
+  <Header
+    chapter="Ch. 02"
+    label="INFO"
+    caption="Commissions / Schedules"
+  />
+
+  <!-- Content Area: Manga Page Layout -->
+  <div class="relative z-10 flex-1 w-full min-h-0 overflow-y-auto md:overflow-hidden p-4 sm:p-6 md:p-8 flex items-center justify-center">
+    <div class="w-full h-full max-w-6xl grid grid-cols-1 md:grid-cols-12 md:grid-rows-6 gap-3 sm:gap-4">
+      
+      <!-- Panel 1: Dialogue / Greeting (Top-Left on Desktop) -->
+      <div class="md:col-span-4 md:row-span-2 border-2 border-black bg-white p-4 sm:p-5 flex flex-col justify-between relative overflow-hidden group">
+        <div class="flex items-center justify-between border-b border-neutral-200 pb-1.5">
+          <span class="text-[10px] font-mono font-bold tracking-widest uppercase bg-black text-white px-1.5 py-0.5">
+            LOG // 01
+          </span>
+          <span class="text-[10px] font-mono text-neutral-400 uppercase tracking-wider">
+            GREETING
+          </span>
+        </div>
+        <div class="my-auto py-2">
+          <p class="text-3xl sm:text-4xl font-black font-['Jost',sans-serif] tracking-wider text-black">
+            YAHO!
+          </p>
+        </div>
+        <div class="text-right">
+          <span class="text-[10px] font-mono text-neutral-400">///</span>
+        </div>
+      </div>
+
+      <!-- Panel 2: Catchphrase / Statement Panel (Top-Right on Desktop) -->
+      <div class="md:col-span-8 md:row-span-2 border-2 border-black bg-neutral-50 p-4 sm:p-6 flex flex-col justify-between relative overflow-hidden">
+        <!-- Subtle panel screentone accent -->
+        <div class="absolute inset-0 opacity-5 bg-[radial-gradient(#000_1px,transparent_1px)] bg-size-[6px_6px] pointer-events-none"></div>
+        
+        <div class="relative z-10 flex items-center justify-between border-b border-neutral-300 pb-1.5">
+          <span class="text-[10px] font-mono font-bold tracking-widest uppercase bg-black text-white px-1.5 py-0.5">
+            STATEMENT // 02
+          </span>
+          <span class="text-[10px] font-mono text-neutral-500 uppercase tracking-wider">
+            QUOTE
+          </span>
+        </div>
+        
+        <div class="relative z-10 py-3 sm:py-4">
+          <p class="text-lg sm:text-xl md:text-2xl font-['Jost',sans-serif] italic tracking-wide text-black leading-relaxed">
+            "I am <span class="font-bold font-['Jost',sans-serif]">Ai</span> but definitely not <span class="font-bold font-['Jost',sans-serif]">AI</span> <span class="text-muted-foreground">(artificial intelligence)</span>."
+          </p>
+        </div>
+
+        <div class="relative z-10 flex justify-between items-center text-[10px] font-mono text-neutral-400">
+          <span>IDENTITY VERIFIED</span>
+          <span>~</span>
+        </div>
+      </div>
+
+      <!-- Panel 3: Narrative / Bio Panel (Bottom-Left / Center on Desktop) -->
+      <div class="md:col-span-8 md:row-span-4 border-2 border-black bg-white p-5 sm:p-6 md:p-8 flex flex-col justify-between relative overflow-hidden">
+        <div class="flex items-center justify-between border-b border-neutral-200 pb-2 mb-4">
+          <div class="flex items-center gap-2">
+            <span class="text-[10px] font-mono font-bold tracking-widest uppercase bg-black text-white px-1.5 py-0.5">
+              NARRATIVE // 03
+            </span>
+            <span class="text-xs font-mono font-bold uppercase tracking-wider text-black">
+              Profile & Bio
+            </span>
+          </div>
+          <span class="text-[10px] font-mono text-neutral-400 hidden sm:inline">
+            SECTION 02-B
+          </span>
+        </div>
+
+        <div class="my-auto py-2">
+          <p class="text-base sm:text-lg md:text-xl font-['Jost',sans-serif] tracking-wider text-neutral-800 leading-relaxed sm:leading-loose">
+            A human, self-taught, passionate freelance illustrator based in Asia with a
+            unique blend of Japanese aesthetics and modern trends. Specializing in
+            dynamic character art and conceptual designs, I bring stories and
+            visions to life with mono-style storytelling.
+          </p>
+        </div>
+
+        <div class="pt-3 border-t border-neutral-100 flex items-center justify-between text-xs font-mono text-neutral-400">
+          <span>PAGE 02</span>
+          <span>CONTINUED →</span>
+        </div>
+      </div>
+
+      <!-- Panel 4: Channels / Socials Panel (Bottom-Right on Desktop) -->
+      <div class="md:col-span-4 md:row-span-4 border-2 border-black bg-neutral-100 p-5 sm:p-6 flex flex-col justify-between relative overflow-hidden">
+        <!-- Halftone Pattern inside panel -->
+        <div class="absolute inset-0 opacity-10 bg-[radial-gradient(#000_1px,transparent_1px)] bg-size-[8px_8px] pointer-events-none"></div>
+
+        <div class="relative z-10 flex items-center justify-between border-b border-black pb-2 mb-4">
+          <span class="text-[10px] font-mono font-bold tracking-widest uppercase bg-black text-white px-1.5 py-0.5">
+            NETWORKS // 04
+          </span>
+          <span class="text-xs font-mono font-bold uppercase tracking-wider text-black">
+            Connect
+          </span>
+        </div>
+
+        <div class="relative z-10 flex flex-col gap-4 sm:gap-5 my-auto py-2">
+          <div class="p-3 bg-white border border-black">
+            <SocialLink
+              icon={SiInstagram}
+              label="@iamaieien"
+              link="https://www.instagram.com/iamaieien/"
+            />
+          </div>
+          <div class="p-3 bg-white border border-black">
+            <SocialLink
+              icon={SiFacebook}
+              label="Ai Eien"
+              link=""
+            />
+          </div>
+        </div>
+
+        <div class="relative z-10 pt-3 border-t border-neutral-300 flex items-center justify-between text-[10px] font-mono text-neutral-500">
+          <span>OFFICIAL CHANNELS</span>
+          <span>2026</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
 </section>
+
+

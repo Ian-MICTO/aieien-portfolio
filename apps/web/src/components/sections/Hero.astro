@@ -1,5 +1,11 @@
 ---
 /* src/components/sections/Hero.astro */
+import { getHero, getStrapiMediaUrl } from "@/lib/strapi";
+import defaultHeroImg from "@/assets/images/Hero-w-bg.jpg";
+
+const hero = await getHero("home");
+const strapiHeroImageUrl = getStrapiMediaUrl(hero?.image?.url);
+const heroImageSrc = strapiHeroImageUrl;
 ---
 
 <section
@@ -9,10 +15,16 @@
   <span data-pagefind-meta="title" style="display: none;">Hero</span>
 
   <div class="w-full h-full relative flex items-center justify-center">
-    <img
-      src="../../../src/assets/images/Hero-w-bg.jpg"
-      alt="Portfolio Hero"
-      class="w-full h-full object-cover"
-    />
+    {heroImageSrc ? (
+      <img
+        src={heroImageSrc}
+        alt={hero?.image?.alternativeText || "Portfolio Hero"}
+        class="w-full h-full object-cover"
+      />
+    ) : (
+      <div class="w-full h-full flex items-center justify-center text-xs font-mono text-neutral-400">
+        NO HERO IMAGE
+      </div>
+    )}
   </div>
 </section>

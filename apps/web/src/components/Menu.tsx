@@ -1,70 +1,132 @@
 import type { JSX, MouseEvent } from "react";
 import type { MenuItem } from "../types/index";
+import type { SectionData } from "../types/strapi-sections";
 
 interface MenuProps {
+  sections?: SectionData[];
   onClose?: () => void;
 }
 
-export default function Menu({ onClose }: MenuProps): JSX.Element {
-  const menuItems: MenuItem[] = [
-    {
-      id: "1",
-      title: "About",
-      href: "#about",
-    },
-    {
-      id: "2",
-      title: "Info",
-      href: "#info",
-    },
-    {
-      id: "3",
-      title: "Style",
-      href: "#style",
-    },
-    {
-      id: "4",
-      title: "Works",
-      href: "#works",
-    },
-    {
-      id: "5",
-      title: "Connect",
-      href: "#connect",
-    },
-    {
-      id: "6",
-      title: "Comments",
-      href: "#comments",
-    },
-  ];
+interface DefinedMenuItem extends MenuItem {
+  sectionId: string;
+  aliases?: string[];
+}
+
+const ALL_MENU_ITEMS: DefinedMenuItem[] = [
+  {
+    id: "1",
+    title: "About",
+    href: "#about",
+    sectionId: "about",
+  },
+  {
+    id: "2",
+    title: "Info",
+    href: "#info",
+    sectionId: "info",
+  },
+  {
+    id: "3",
+    title: "Style",
+    href: "#style",
+    sectionId: "style",
+    aliases: ["styles"],
+  },
+  {
+    id: "4",
+    title: "Works",
+    href: "#works",
+    sectionId: "works",
+    aliases: ["album", "work"],
+  },
+  {
+    id: "5",
+    title: "Connect",
+    href: "#connect",
+    sectionId: "connect",
+    aliases: ["contacts", "contact"],
+  },
+  {
+    id: "6",
+    title: "Comments",
+    href: "#comments",
+    sectionId: "comments",
+    aliases: ["comment"],
+  },
+  {
+    id: "7",
+    title: "Panels 1",
+    href: "#panels1",
+    sectionId: "panels1",
+    aliases: ["panels-1", "panel-1"],
+  },
+];
+
+function checkSectionEnabled(
+  sections: SectionData[] | undefined | null,
+  sectionId: string,
+  aliases: string[] = [],
+): boolean {
+  if (!sections || !Array.isArray(sections) || sections.length === 0) {
+    return false;
+  }
+
+  const targets = [sectionId, ...aliases].map((t) =>
+    t.toLowerCase().replace(/^#/, "").trim(),
+  );
+
+  const found = sections.find((s) => {
+    const rawId =
+      s.sectionId || (s as unknown as { idDiv?: string }).idDiv || "";
+    const id = rawId.toLowerCase().replace(/^#/, "").trim();
+    return targets.includes(id);
+  });
+
+  return Boolean(found?.isEnabled);
+}
+
+export default function Menu({
+  sections = [],
+  onClose,
+}: MenuProps): JSX.Element {
+  const visibleMenuItems = ALL_MENU_ITEMS.filter((item) =>
+    checkSectionEnabled(sections, item.sectionId, item.aliases),
+  );
+
+  const isHomeEnabled = checkSectionEnabled(sections, "home", ["hero"]);
 
   const handleItemClick = (e: MouseEvent<HTMLAnchorElement>, href: string) => {
     onClose?.();
   };
 
   return (
-    <div className="relative h-full w-full flex flex-col justify-between overflow-hidden bg-white pt-14 md:pt-0">
+    <div className="relative h-full w-full flex flex-col justify-between overflow-hidden bg-white pt-10 md:pt-0">
       {/* Halftone Effect Background */}
       <div className="absolute inset-0 opacity-10 bg-[radial-gradient(#000_1px,transparent_1px)] [bg-size:8px_8px] pointer-events-none" />
 
       {/* Menu Links */}
       <div className="relative z-10 overflow-y-auto">
-        {menuItems.map((item) => (
+        {visibleMenuItems.map((item, index) => (
           <a
             key={item.id}
             href={item.href}
             onClick={(e) => handleItemClick(e, item.href)}
-            className="flex border-b-2 border-black justify-between px-4 sm:px-6 py-3 sm:py-4 items-center group hover:bg-black hover:text-white transition-colors duration-150 cursor-pointer"
+            className="flex border border-black justify-between px-4 sm:px-6 py-3 sm:py-4 items-center group hover:bg-black hover:text-white transition-colors duration-150 cursor-pointer"
           >
             <h2 className="text-2xl sm:text-3xl uppercase tracking-normal">
               {item.title}
             </h2>
             <span className="text-xs sm:text-sm font-semibold tracking-wider font-mono opacity-60 group-hover:opacity-100">
-              Ch. {item.id.padStart(2, "0")}
+              Ch. {String(index + 1).padStart(2, "0")}
             </span>
           </a>
         ))}
+
+        {visibleMenuItems.length === 0 && (
+          <div className="px-6 py-8 text-neutral-400 font-mono text-xs uppercase tracking-wider">
+            No sections currently enabled
+          </div>
+        )}
       </div>
 
       {/* Footer Branding */}
@@ -72,13 +134,19 @@ export default function Menu({ onClose }: MenuProps): JSX.Element {
         <span className="text-xs sm:text-sm font-bold tracking-widest font-mono uppercase text-neutral-500">
           Volume 01
         </span>
-        <a
-          href="#home"
-          onClick={onClose}
-          className="block text-6xl sm:text-7xl md:text-8xl lg:text-9xl font-black leading-[0.85] tracking-wide mt-1 select-none hover:opacity-80 transition-opacity cursor-pointer"
-        >
-          Home
-        </a>
+        {isHomeEnabled ? (
+          <a
+            href="#home"
+            onClick={onClose}
+            className="block text-6xl sm:text-7xl md:text-8xl lg:text-9xl font-black leading-[0.85] tracking-wide mt-1 select-none hover:opacity-80 transition-opacity cursor-pointer"
+          >
+            Home
+          </a>
+        ) : (
+          <span className="block text-6xl sm:text-7xl md:text-8xl lg:text-9xl font-black leading-[0.85] tracking-wide mt-1 select-none opacity-30">
+            Home
+          </span>
+        )}
       </div>
     </div>
   );

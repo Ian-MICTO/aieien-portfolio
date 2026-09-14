@@ -19,7 +19,7 @@ export function Header({
         <span className="text-xs font-mono font-bold tracking-widest uppercase bg-black text-white px-2 py-0.5">
           {chapter}
         </span>
-        <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight uppercase">
+        <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-wide uppercase">
           {label}
         </h2>
       </div>

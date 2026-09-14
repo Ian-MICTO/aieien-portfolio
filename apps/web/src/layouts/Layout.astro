@@ -1,7 +1,14 @@
 ---
 import "../styles/global.css";
 import Navbar from "../components/Navbar";
-const { title } = Astro.props;
+import type { SectionData } from "../types/strapi-sections";
+
+interface Props {
+	title?: string;
+	sections?: SectionData[];
+}
+
+const { title, sections = [] } = Astro.props;
 ---
 
 <!doctype html>
@@ -23,9 +30,13 @@ const { title } = Astro.props;
 			rel="stylesheet"
 			href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Jost:wght@400;900&display=swap"
 		/>
+		<link
+			href="https://api.fontshare.com/v2/css?f[]=supreme@300,400,500,700&display=swap"
+			rel="stylesheet"
+		/>
 	</head>
 	<body class="overflow-x-hidden w-full min-h-screen bg-white">
-		<Navbar client:load />
+		<Navbar client:load sections={sections} />
 		<div id="scroll-wrapper" class="relative w-full min-h-screen overflow-visible md:h-screen md:overflow-hidden">
 			<main
 				id="horizontal-track"

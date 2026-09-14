@@ -1,7 +1,12 @@
 import Menu from "./Menu.tsx";
 import { useState, type JSX } from "react";
+import type { SectionData } from "../types/strapi-sections";
 
-export default function Navbar(): JSX.Element {
+interface NavbarProps {
+  sections?: SectionData[];
+}
+
+export default function Navbar({ sections = [] }: NavbarProps): JSX.Element {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
@@ -45,7 +50,7 @@ export default function Navbar(): JSX.Element {
           isOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
-        <Menu onClose={() => setIsOpen(false)} />
+        <Menu sections={sections} onClose={() => setIsOpen(false)} />
       </div>
     </>
   );

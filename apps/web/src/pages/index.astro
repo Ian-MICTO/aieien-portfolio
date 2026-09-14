@@ -9,18 +9,20 @@ import Info from "../components/sections/Info.astro";
 import Album from "../components/sections/Works.astro";
 import Connect from "../components/sections/Connect.astro";
 import Comment from "../components/sections/Comment.astro";
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+import { getSections, isSectionEnabled } from "../lib/strapi";
+
+const sections = await getSections();
 ---
 
-<Layout>
+<Layout sections={sections}>
 	<!-- <Welcome /> -->
-		<Hero />
-		<About />
-		<Info />
-		<Style />
-		<Album />
-		<Connect />
-		<Comment />
-		<Panels1 />
+	{isSectionEnabled(sections, "home", ["hero"]) && <Hero />}
+	{isSectionEnabled(sections, "about") && <About />}
+	{isSectionEnabled(sections, "info") && <Info />}
+	{isSectionEnabled(sections, "style", ["styles"]) && <Style />}
+	{isSectionEnabled(sections, "works", ["album", "work"]) && <Album />}
+	{isSectionEnabled(sections, "connect", ["contact", "contacts"]) && <Connect />}
+	{isSectionEnabled(sections, "comments", ["comment"]) && <Comment />}
+	{isSectionEnabled(sections, "panels1", ["panels-1", "panel-1"]) && <Panels1 />}
 </Layout>
+
