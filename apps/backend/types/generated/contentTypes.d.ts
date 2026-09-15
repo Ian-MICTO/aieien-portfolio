@@ -529,6 +529,33 @@ export interface ApiHeroHero extends Struct.CollectionTypeSchema {
   };
 }
 
+export interface ApiInfoInfo extends Struct.CollectionTypeSchema {
+  collectionName: 'infos';
+  info: {
+    displayName: 'Infos';
+    pluralName: 'infos';
+    singularName: 'info';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    content: Schema.Attribute.JSON;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<'oneToMany', 'api::info.info'> &
+      Schema.Attribute.Private;
+    name: Schema.Attribute.String;
+    publishedAt: Schema.Attribute.DateTime;
+    type: Schema.Attribute.Enumeration<['schedule', 'information']>;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
 export interface ApiSectionSection extends Struct.CollectionTypeSchema {
   collectionName: 'sections';
   info: {
@@ -1129,6 +1156,7 @@ declare module '@strapi/strapi' {
       'api::comment.comment': ApiCommentComment;
       'api::contact.contact': ApiContactContact;
       'api::hero.hero': ApiHeroHero;
+      'api::info.info': ApiInfoInfo;
       'api::section.section': ApiSectionSection;
       'api::style-panel.style-panel': ApiStylePanelStylePanel;
       'api::work.work': ApiWorkWork;
