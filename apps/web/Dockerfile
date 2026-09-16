@@ -3,13 +3,14 @@ FROM node:20-alpine AS base
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
 RUN corepack enable && corepack prepare pnpm@latest --activate
+RUN pnpm config set enable-pre-post-scripts true
 
 WORKDIR /app
 
 # Dependencies stage
 FROM base AS dependencies
 COPY package.json pnpm-lock.yaml* ./
-RUN if [ -f pnpm-lock.yaml ]; then pnpm install --frozen-lockfile; else pnpm install; fi
+RUN pnpm install --no-frozen-lockfile --config.enable-pre-post-scripts=true
 
 # Build stage
 FROM base AS build
