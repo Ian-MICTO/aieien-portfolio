@@ -1,0 +1,82 @@
+services:
+  # 1. PostgreSQL Database Container (Local)
+  postgres:
+    image: postgres:16-alpine
+    container_name: aieien-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: strapi
+      POSTGRES_USER: strapi
+      POSTGRES_PASSWORD: strapi_local_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - strapi-postgres-data:/var/lib/postgresql/data
+    networks:
+      - aieien-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U strapi -d strapi"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # 2. Strapi Backend Web Service Container (Local)
+  backend:
+    build:
+      context: ./apps/backend
+      dockerfile: Dockerfile
+    container_name: aieien-backend
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      NODE_ENV: development
+      HOST: 0.0.0.0
+      PORT: 1337
+      DATABASE_CLIENT: postgres
+      DATABASE_HOST: postgres
+      DATABASE_PORT: 5432
+      DATABASE_NAME: strapi
+      DATABASE_USERNAME: strapi
+      DATABASE_PASSWORD: strapi_local_password
+      DATABASE_SSL: "false"
+      APP_KEYS: "localAppKey1,localAppKey2,localAppKey3,localAppKey4"
+      API_TOKEN_SALT: "localApiTokenSalt123"
+      ADMIN_JWT_SECRET: "localAdminJwtSecret123"
+      JWT_SECRET: "localJwtSecret123"
+      TRANSFER_TOKEN_SALT: "localTransferTokenSalt123"
+      ENCRYPTION_KEY: "localEncryptionKey1234567890"
+    ports:
+      - "1337:1337"
+    volumes:
+      # Mount public uploads so uploaded media persists locally
+      - ./apps/backend/public/uploads:/opt/app/public/uploads
+    networks:
+      - aieien-network
+
+  # 3. Astro Frontend Web Service Container (Local)
+  frontend:
+    build:
+      context: ./apps/web
+      dockerfile: Dockerfile
+      args:
+        STRAPI_URL: http://backend:1337
+    container_name: aieien-frontend
+    restart: unless-stopped
+    depends_on:
+      - backend
+    environment:
+      STRAPI_URL: http://backend:1337
+    ports:
+      - "4321:4321"
+    networks:
+      - aieien-network
+
+networks:
+  aieien-network:
+    driver: bridge
+
+volumes:
+  strapi-postgres-data:
+
