@@ -12,7 +12,6 @@ services:
     runtime: docker
     dockerfilePath: ./apps/backend/Dockerfile
     dockerContext: ./apps/backend
-    rootDir: apps/backend
     region: oregon
     plan: free
     healthCheckPath: /_health
@@ -47,8 +46,9 @@ services:
         generateValue: true
 
   # 2. Astro Frontend Static Site
-  - type: static
+  - type: web
     name: aieien-frontend
+    runtime: static
     buildCommand: pnpm --filter web build
     staticPublishPath: ./apps/web/dist
     envVars:
@@ -59,3 +59,4 @@ services:
           property: host
       - key: STRAPI_API_TOKEN
         sync: false
+
