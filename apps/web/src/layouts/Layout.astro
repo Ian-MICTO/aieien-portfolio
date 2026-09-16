@@ -34,8 +34,12 @@ const { title, sections = [] } = Astro.props;
 			href="https://api.fontshare.com/v2/css?f[]=supreme@300,400,500,700&display=swap"
 			rel="stylesheet"
 		/>
-	</head>
-	<body class="overflow-x-hidden w-full min-h-screen bg-white">
+	<body
+		class="overflow-x-hidden w-full min-h-screen bg-white select-none"
+		oncontextmenu="return false;"
+		onselectstart="return false;"
+		ondragstart="return false;"
+	>
 		<Navbar client:load sections={sections} />
 		<div id="scroll-wrapper" class="relative w-full min-h-screen overflow-visible md:h-screen md:overflow-hidden">
 			<main
@@ -148,6 +152,33 @@ const { title, sections = [] } = Astro.props;
       window.addEventListener("scroll", () => {
         if (window.innerWidth >= 768 && window.scrollX !== 0) {
           window.scrollTo(0, window.scrollY);
+        }
+      });
+
+      // 4. Content Protection Listeners
+      document.addEventListener("contextmenu", (e) => {
+        e.preventDefault();
+      });
+
+      document.addEventListener("dragstart", (e) => {
+        e.preventDefault();
+      });
+
+      document.addEventListener("selectstart", (e) => {
+        e.preventDefault();
+      });
+
+      document.addEventListener("copy", (e) => {
+        e.preventDefault();
+      });
+
+      document.addEventListener("cut", (e) => {
+        e.preventDefault();
+      });
+
+      document.addEventListener("keydown", (e) => {
+        if ((e.ctrlKey || e.metaKey) && ["s", "c", "u", "p", "a"].includes(e.key.toLowerCase())) {
+          e.preventDefault();
         }
       });
 

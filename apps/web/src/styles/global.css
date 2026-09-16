@@ -6,6 +6,43 @@
 
 html {
   scroll-behavior: smooth;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+/* Global Content Protection */
+*,
+*::before,
+*::after {
+  -webkit-user-select: none !important;
+  -moz-user-select: none !important;
+  -ms-user-select: none !important;
+  user-select: none !important;
+  -webkit-touch-callout: none !important;
+}
+
+img,
+picture,
+video,
+canvas,
+svg {
+  -webkit-user-drag: none !important;
+  -khtml-user-drag: none !important;
+  -moz-user-drag: none !important;
+  -o-user-drag: none !important;
+  user-drag: none !important;
+  -webkit-touch-callout: none !important;
+}
+
+/* Allow text inputs and textareas to function normally if added */
+input,
+textarea {
+  -webkit-user-select: text !important;
+  -moz-user-select: text !important;
+  -ms-user-select: text !important;
+  user-select: text !important;
 }
 
 @font-face {
@@ -80,13 +117,16 @@ body {
   }
 }
 
+astro-island {
+  display: contents;
+}
+
 /* Hide scrollbars globally across all browsers while retaining scroll ability */
 html,
 body,
 #scroll-wrapper,
 #horizontal-track,
-.vertical-scroll,
-.no-scrollbar {
+.vertical-scroll {
   -ms-overflow-style: none !important; /* IE and Edge */
   scrollbar-width: none !important; /* Firefox */
 }
@@ -95,11 +135,95 @@ html::-webkit-scrollbar,
 body::-webkit-scrollbar,
 #scroll-wrapper::-webkit-scrollbar,
 #horizontal-track::-webkit-scrollbar,
-.vertical-scroll::-webkit-scrollbar,
-.no-scrollbar::-webkit-scrollbar {
+.vertical-scroll::-webkit-scrollbar {
   display: none !important; /* Chrome, Safari, Opera */
   width: 0 !important;
   height: 0 !important;
+}
+
+@utility no-scrollbar {
+  -ms-overflow-style: none !important;
+  scrollbar-width: none !important;
+  &::-webkit-scrollbar {
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
+  }
+}
+
+@utility thin-scrollbar {
+  scrollbar-width: thin !important;
+  scrollbar-color: rgba(0, 0, 0, 0.3) transparent !important;
+  &::-webkit-scrollbar {
+    width: 2.5px !important;
+    height: 2.5px !important;
+  }
+  &::-webkit-scrollbar-track {
+    background: transparent !important;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.3) !important;
+    border-radius: 9999px !important;
+  }
+  &::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 0, 0, 0.7) !important;
+  }
+}
+
+.no-scrollbar,
+[class*="no-scrollbar"] {
+  -ms-overflow-style: none !important;
+  scrollbar-width: none !important;
+}
+
+.no-scrollbar::-webkit-scrollbar,
+[class*="no-scrollbar"]::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+  background: transparent !important;
+}
+
+.no-scrollbar::-webkit-scrollbar-button,
+[class*="no-scrollbar"]::-webkit-scrollbar-button {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
+.no-scrollbar::-webkit-scrollbar-track,
+[class*="no-scrollbar"]::-webkit-scrollbar-track,
+.no-scrollbar::-webkit-scrollbar-thumb,
+[class*="no-scrollbar"]::-webkit-scrollbar-thumb {
+  display: none !important;
+}
+
+.thin-scrollbar,
+[class*="thin-scrollbar"] {
+  scrollbar-width: thin !important;
+  scrollbar-color: rgba(0, 0, 0, 0.3) transparent !important;
+}
+
+.thin-scrollbar::-webkit-scrollbar,
+[class*="thin-scrollbar"]::-webkit-scrollbar {
+  width: 2.5px !important;
+  height: 2.5px !important;
+}
+
+.thin-scrollbar::-webkit-scrollbar-track,
+[class*="thin-scrollbar"]::-webkit-scrollbar-track {
+  background: transparent !important;
+}
+
+.thin-scrollbar::-webkit-scrollbar-thumb,
+[class*="thin-scrollbar"]::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.3) !important;
+  border-radius: 9999px !important;
+}
+
+.thin-scrollbar::-webkit-scrollbar-thumb:hover,
+[class*="thin-scrollbar"]::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.7) !important;
 }
 
 @theme inline {

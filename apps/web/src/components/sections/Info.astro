@@ -1,12 +1,103 @@
 ---
 import { Header } from "../Header";
-import { SocialLink } from "../social-link";
-import { SiInstagram, SiFacebook } from '@icons-pack/react-simple-icons';
+import { getInfos } from "@/lib/strapi";
+import type { ScheduleContent } from "@/types/info-data";
+
+const infos = await getInfos();
+
+// Helper to extract string content from information type
+const getContentString = (name: string, defaultText: string = ""): string => {
+  const item = infos.find(
+    (i) => (i.name || "").toLowerCase().trim() === name.toLowerCase().trim()
+  );
+  if (!item || !item.content) return defaultText;
+  if (typeof item.content === "string") return item.content;
+  if (
+    typeof item.content === "object" &&
+    "content" in item.content &&
+    typeof item.content.content === "string"
+  ) {
+    return item.content.content;
+  }
+  return defaultText;
+};
+
+// Extract specific data
+const greetingText = getContentString("greeting", "YAHO!");
+const rawQuote = getContentString(
+  "quote",
+  "I am Ai but definitely not AI (artificial intelligence)."
+);
+const cleanQuote = rawQuote.replace(/^["“]|["”]$/g, "");
+const quoteParts = cleanQuote.split(/(\bai\b)/gi);
+const narrativeText = getContentString(
+  "narrative",
+  "A human, self-taught, passionate freelance illustrator based in Asia with a unique blend of Japanese aesthetics and modern trends. Specializing in dynamic character art and conceptual designs, I bring stories and visions to life with mono-style storytelling."
+);
+
+// Extract schedule items and format in frontmatter
+const rawSchedules = infos.filter(
+  (i) =>
+    i.type === "schedule" ||
+    (i.name || "").toLowerCase().trim() === "saturday" ||
+    (i.name || "").toLowerCase().trim() === "sunday"
+);
+
+interface FormattedSchedule {
+  id: string | number;
+  day: string;
+  time: string;
+  note?: string;
+}
+
+const schedules: FormattedSchedule[] =
+  rawSchedules.length > 0
+    ? rawSchedules.map((item, idx) => {
+        const c = (typeof item.content === "object" && item.content !== null
+          ? item.content
+          : {}) as Partial<ScheduleContent>;
+        const day = c.day || "";
+        const startTime = c.start_time || "";
+        const endTime = c.end_time || "";
+        const note = c.note || "";
+
+        let time = "";
+        if (startTime && endTime) {
+          time = `~${startTime} - ${endTime}`;
+        } else if (startTime) {
+          time = `~${startTime} - —:—`;
+        } else if (endTime) {
+          time = `—:— - ${endTime}`;
+        } else {
+          time = "Flexible";
+        }
+
+        return {
+          id: item.documentId || item.id || idx,
+          day,
+          time,
+          note,
+        };
+      })
+    : [
+        {
+          id: "default-1",
+          day: "Saturdays",
+          time: "~14:00 - —:—",
+          note: "Afternoon onwards",
+        },
+        {
+          id: "default-2",
+          day: "Sundays",
+          time: "~10:00 - 12:00—",
+          note: "Morning 'till noon",
+        },
+      ];
 ---
 
 <section
   id="info"
-  class="relative z-0 w-full min-h-screen md:w-screen md:min-w-screen md:h-screen md:shrink-0 bg-white border-b-2 md:border-b-0 md:border-r-2 border-black flex flex-col pl-0 md:pl-15 overflow-hidden"
+  class="relative z-0 w-full min-h-screen md:w-screen md:min-w-screen md:h-screen md:shrink-0 bg-white border-b-2 md:border-b-0 md:border-r-2 border-black flex flex-col pl-0 md:pl-15 overflow-y-auto md:overflow-hidden"
 >
   <!-- Halftone Effect Background Across Whole Section -->
   <div class="absolute inset-0 opacity-10 bg-[radial-gradient(#000_1px,transparent_1px)] bg-size-[8px_8px] pointer-events-none z-0"></div>
@@ -21,64 +112,73 @@ import { SiInstagram, SiFacebook } from '@icons-pack/react-simple-icons';
   />
 
   <!-- Content Area: Manga Page Layout -->
-  <div class="relative z-10 flex-1 w-full min-h-0 overflow-y-auto md:overflow-hidden p-4 sm:p-6 md:p-8 flex items-center justify-center">
-    <div class="w-full h-full max-w-6xl grid grid-cols-1 md:grid-cols-12 md:grid-rows-6 gap-3 sm:gap-4">
+  <div class="relative z-10 flex-1 w-full min-h-0 overflow-y-auto md:overflow-hidden p-3 sm:p-4 md:p-6 lg:p-8 flex items-center justify-center">
+    <div class="w-full h-full grid grid-cols-1 md:grid-cols-12 md:grid-rows-6 gap-3 sm:gap-4 md:gap-4 lg:gap-5">
       
-      <!-- Panel 1: Dialogue / Greeting (Top-Left on Desktop) -->
-      <div class="md:col-span-4 md:row-span-2 border-2 border-black bg-white p-4 sm:p-5 flex flex-col justify-between relative overflow-hidden group">
-        <div class="flex items-center justify-between border-b border-neutral-200 pb-1.5">
-          <span class="text-[10px] font-mono font-bold tracking-widest uppercase bg-black text-white px-1.5 py-0.5">
+      <!-- Panel 1: Dialogue / Greeting (Top-Left) -->
+      <div class="md:col-span-5 lg:col-span-4 md:row-span-2 border-2 border-black bg-white p-4 sm:p-5 lg:p-6 flex flex-col justify-between relative overflow-hidden group">
+        <div class="absolute inset-0 opacity-10 bg-[radial-gradient(#000_1px,transparent_1px)] bg-size-[8px_8px] pointer-events-none"></div>
+        <div class="relative z-10 flex items-center justify-between border-b border-neutral-200 pb-1.5 gap-2">
+          <span class="text-[10px] font-mono font-bold tracking-widest uppercase bg-black text-white px-1.5 py-0.5 shrink-0">
             LOG // 01
           </span>
-          <span class="text-[10px] font-mono text-neutral-400 uppercase tracking-wider">
+          <span class="text-[10px] font-mono text-neutral-400 uppercase tracking-wider truncate">
             GREETING
           </span>
         </div>
-        <div class="my-auto py-2">
-          <p class="text-3xl sm:text-4xl font-black font-['Jost',sans-serif] tracking-wider text-black">
-            YAHO!
+        <div class="relative z-10 my-auto py-2">
+          <p class="text-3xl sm:text-4xl md:text-4xl lg:text-5xl font-black font-['Jost',sans-serif] tracking-wider text-black">
+            {greetingText}
           </p>
         </div>
-        <div class="text-right">
-          <span class="text-[10px] font-mono text-neutral-400">///</span>
+        <div class="relative z-10 text-right">
+          <span class="text-[10px] font-mono text-neutral-400">Next Chapter →</span>
         </div>
       </div>
 
-      <!-- Panel 2: Catchphrase / Statement Panel (Top-Right on Desktop) -->
-      <div class="md:col-span-8 md:row-span-2 border-2 border-black bg-neutral-50 p-4 sm:p-6 flex flex-col justify-between relative overflow-hidden">
+      <!-- Panel 2: Catchphrase / Statement Panel (Top-Right) -->
+      <div class="md:col-span-7 lg:col-span-8 md:row-span-2 border-2 border-black bg-neutral-50 p-4 sm:p-5 lg:p-6 flex flex-col justify-between relative overflow-hidden">
         <!-- Subtle panel screentone accent -->
         <div class="absolute inset-0 opacity-5 bg-[radial-gradient(#000_1px,transparent_1px)] bg-size-[6px_6px] pointer-events-none"></div>
         
-        <div class="relative z-10 flex items-center justify-between border-b border-neutral-300 pb-1.5">
-          <span class="text-[10px] font-mono font-bold tracking-widest uppercase bg-black text-white px-1.5 py-0.5">
+        <div class="relative z-10 flex items-center justify-between border-b border-neutral-300 pb-1.5 gap-2">
+          <span class="text-[10px] font-mono font-bold tracking-widest uppercase bg-black text-white px-1.5 py-0.5 shrink-0">
             STATEMENT // 02
           </span>
-          <span class="text-[10px] font-mono text-neutral-500 uppercase tracking-wider">
+          <span class="text-[10px] font-mono text-neutral-500 uppercase tracking-wider truncate">
             QUOTE
           </span>
         </div>
         
         <div class="relative z-10 py-3 sm:py-4">
-          <p class="text-lg sm:text-xl md:text-2xl font-['Jost',sans-serif] italic tracking-wide text-black leading-relaxed">
-            "I am <span class="font-bold font-['Jost',sans-serif]">Ai</span> but definitely not <span class="font-bold font-['Jost',sans-serif]">AI</span> <span class="text-muted-foreground">(artificial intelligence)</span>."
+          <p class="text-base sm:text-lg md:text-xl lg:text-2xl font-['Jost',sans-serif] tracking-wide text-black leading-relaxed">
+            &ldquo;{
+              quoteParts.map((part) =>
+                part.toLowerCase() === "ai" ? (
+                  <span class="font-semibold italic font-['Jost',sans-serif]">{part}</span>
+                ) : (
+                  part
+                )
+              )
+            }&rdquo;
           </p>
         </div>
 
         <div class="relative z-10 flex justify-between items-center text-[10px] font-mono text-neutral-400">
           <span>IDENTITY VERIFIED</span>
-          <span>~</span>
+          <span>~ ai</span>
         </div>
       </div>
 
-      <!-- Panel 3: Narrative / Bio Panel (Bottom-Left / Center on Desktop) -->
-      <div class="md:col-span-8 md:row-span-4 border-2 border-black bg-white p-5 sm:p-6 md:p-8 flex flex-col justify-between relative overflow-hidden">
-        <div class="flex items-center justify-between border-b border-neutral-200 pb-2 mb-4">
+      <!-- Panel 3: Schedules / Calendar Panel (Bottom-Left) -->
+      <div class="md:col-span-6 lg:col-span-7 xl:col-span-8 md:row-span-4 border-2 border-black bg-white p-4 sm:p-5 lg:p-6 flex flex-col justify-between relative overflow-hidden">
+        <div class="flex items-center justify-between border-b border-neutral-200 pb-2 mb-3 sm:mb-4 gap-2">
           <div class="flex items-center gap-2">
-            <span class="text-[10px] font-mono font-bold tracking-widest uppercase bg-black text-white px-1.5 py-0.5">
-              NARRATIVE // 03
+            <span class="text-[10px] font-mono font-bold tracking-widest uppercase bg-black text-white px-1.5 py-0.5 shrink-0">
+              SCHEDULES // 03
             </span>
             <span class="text-xs font-mono font-bold uppercase tracking-wider text-black">
-              Profile & Bio
+              Calendar
             </span>
           </div>
           <span class="text-[10px] font-mono text-neutral-400 hidden sm:inline">
@@ -86,13 +186,23 @@ import { SiInstagram, SiFacebook } from '@icons-pack/react-simple-icons';
           </span>
         </div>
 
-        <div class="my-auto py-2">
-          <p class="text-base sm:text-lg md:text-xl font-['Jost',sans-serif] tracking-wider text-neutral-800 leading-relaxed sm:leading-loose">
-            A human, self-taught, passionate freelance illustrator based in Asia with a
-            unique blend of Japanese aesthetics and modern trends. Specializing in
-            dynamic character art and conceptual designs, I bring stories and
-            visions to life with mono-style storytelling.
-          </p>
+        <div class="relative z-10 flex flex-col gap-3 sm:gap-4 my-auto py-2">
+          {schedules.map((item) => (
+            <div class="p-3 sm:p-3.5 bg-white border border-black tracking-wider text-xs sm:text-sm lg:text-base font-mono flex flex-wrap items-center justify-between gap-1">
+              <div>
+                {item.day && <span class="font-bold">{item.day}: </span>}
+                <span>{item.time}</span>
+              </div>
+              {item.note && (
+                <span class="italic text-neutral-500 font-sans text-xs sm:text-sm">
+                  ({item.note})
+                </span>
+              )}
+            </div>
+          ))}
+          <div class="p-3 sm:p-3.5 bg-white border border-black font-['Jost',sans-serif] text-xs sm:text-sm lg:text-base leading-relaxed drop-shadow-[8px_8px_0px_rgba(0,0,0,1)]">
+            Weekdays depends on my free time. Message me anytime, might respond at night though.ᐟ
+          </div>
         </div>
 
         <div class="pt-3 border-t border-neutral-100 flex items-center justify-between text-xs font-mono text-neutral-400">
@@ -101,39 +211,28 @@ import { SiInstagram, SiFacebook } from '@icons-pack/react-simple-icons';
         </div>
       </div>
 
-      <!-- Panel 4: Channels / Socials Panel (Bottom-Right on Desktop) -->
-      <div class="md:col-span-4 md:row-span-4 border-2 border-black bg-neutral-100 p-5 sm:p-6 flex flex-col justify-between relative overflow-hidden">
-        <!-- Halftone Pattern inside panel -->
-        <div class="absolute inset-0 opacity-10 bg-[radial-gradient(#000_1px,transparent_1px)] bg-size-[8px_8px] pointer-events-none"></div>
+      <!-- Panel 4: Narrative / Bio Panel (Bottom-Right) -->
+      <div class="md:col-span-6 lg:col-span-5 xl:col-span-4 md:row-span-4 border-2 border-black bg-neutral-100 p-4 sm:p-5 lg:p-6 flex flex-col justify-between relative overflow-hidden">
+        <!-- Subtle halftone accent -->
+        <div class="absolute inset-0 opacity-5 bg-[radial-gradient(#000_1px,transparent_1px)] bg-size-[6px_6px] pointer-events-none"></div>
 
-        <div class="relative z-10 flex items-center justify-between border-b border-black pb-2 mb-4">
-          <span class="text-[10px] font-mono font-bold tracking-widest uppercase bg-black text-white px-1.5 py-0.5">
-            NETWORKS // 04
+        <div class="relative z-10 flex items-center justify-between border-b border-black pb-2 mb-3 sm:mb-4 gap-2">
+          <span class="text-[10px] font-mono font-bold tracking-widest uppercase bg-black text-white px-1.5 py-0.5 shrink-0">
+            Narrative // 04
           </span>
-          <span class="text-xs font-mono font-bold uppercase tracking-wider text-black">
-            Connect
+          <span class="text-xs font-mono font-bold uppercase tracking-wider text-black truncate">
+            Profile & Bio
           </span>
         </div>
 
-        <div class="relative z-10 flex flex-col gap-4 sm:gap-5 my-auto py-2">
-          <div class="p-3 bg-white border border-black">
-            <SocialLink
-              icon={SiInstagram}
-              label="@iamaieien"
-              link="https://www.instagram.com/iamaieien/"
-            />
-          </div>
-          <div class="p-3 bg-white border border-black">
-            <SocialLink
-              icon={SiFacebook}
-              label="Ai Eien"
-              link=""
-            />
-          </div>
+        <div class="relative z-10 flex flex-col my-auto py-2 overflow-y-auto">
+          <p class="text-xs sm:text-sm md:text-sm lg:text-base xl:text-lg font-['Jost',sans-serif] tracking-normal sm:tracking-wide text-neutral-800 leading-relaxed lg:leading-loose">
+            {narrativeText}
+          </p>
         </div>
 
         <div class="relative z-10 pt-3 border-t border-neutral-300 flex items-center justify-between text-[10px] font-mono text-neutral-500">
-          <span>OFFICIAL CHANNELS</span>
+          <span>OFFICIAL</span>
           <span>2026</span>
         </div>
       </div>
@@ -141,5 +240,3 @@ import { SiInstagram, SiFacebook } from '@icons-pack/react-simple-icons';
     </div>
   </div>
 </section>
-
-

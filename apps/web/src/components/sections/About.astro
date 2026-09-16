@@ -1,8 +1,140 @@
 ---
 import { Image } from "astro:assets";
 import panelImgTop from "../../assets/images/about-houtarou.png";
-import orekiFull from "../../assets/images/Houtarou-cutout-full.png";
+import { getHero, getAboutPage, getStrapiMediaUrl } from "@/lib/strapi";
+import { Header } from "@/components/Header";
+import type { ContentPanelData, StrapiBlock, StrapiBlockChild } from "@/types/about";
+
 /* src/components/sections/About.astro */
+const hero = await getHero("about");
+const heroImageUrl = getStrapiMediaUrl(hero?.image?.url);
+const about = await getAboutPage();
+
+const contents: ContentPanelData[] = about?.contents || [];
+
+function extractTextFromChildren(children?: StrapiBlockChild[]): string {
+  if (!children || !Array.isArray(children)) return "";
+  return children
+    .map((c) => {
+      let txt = c.text || extractTextFromChildren(c.children) || "";
+      if (!txt) return "";
+      txt = txt.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+      if (c.bold) txt = `<strong>${txt}</strong>`;
+      if (c.italic) txt = `<em>${txt}</em>`;
+      if (c.underline) txt = `<u>${txt}</u>`;
+      if (c.strikethrough) txt = `<s>${txt}</s>`;
+      if (c.code) txt = `<code class="bg-neutral-100 px-1 py-0.5 text-xs font-mono">${txt}</code>`;
+      return txt;
+    })
+    .join("");
+}
+
+function renderBlockToHtml(block: StrapiBlock | string): string {
+  if (typeof block === "string") {
+    return `<p class="leading-relaxed font-['Jost',sans-serif] text-xs sm:text-sm md:text-[15px] text-neutral-800">${block}</p>`;
+  }
+  if (!block || typeof block !== "object") return "";
+
+  const childrenHtml = extractTextFromChildren(block.children);
+
+  switch (block.type) {
+    case "paragraph":
+      return `<p class="leading-relaxed font-['Jost',sans-serif] text-xs sm:text-sm md:text-[15px] text-neutral-800">${childrenHtml}</p>`;
+    case "heading": {
+      const level = (block.level as number) || 3;
+      return `<h${level} class="font-bold font-['Jost',sans-serif] text-sm sm:text-base uppercase tracking-wider mt-1.5 mb-1 text-black">${childrenHtml}</h${level}>`;
+    }
+    case "quote":
+      return `<blockquote class="border-l-2 border-black pl-2.5 italic font-['Jost',sans-serif] text-xs sm:text-sm my-1 text-neutral-700">${childrenHtml}</blockquote>`;
+    case "list": {
+      const tag = block.format === "ordered" ? "ol" : "ul";
+      const listClass =
+        block.format === "ordered"
+          ? "list-decimal list-inside font-['Jost',sans-serif]"
+          : "list-disc list-inside font-['Jost',sans-serif]";
+      const items = (block.children || [])
+        .map(
+          (li) =>
+            `<li class="font-['Jost',sans-serif] text-xs sm:text-sm">${extractTextFromChildren(li.children)}</li>`
+        )
+        .join("");
+      return `<${tag} class="${listClass} space-y-1 my-1">${items}</${tag}>`;
+    }
+    default:
+      return childrenHtml
+        ? `<p class="leading-relaxed font-['Jost',sans-serif] text-xs sm:text-sm md:text-[15px] text-neutral-800">${childrenHtml}</p>`
+        : "";
+  }
+}
+
+function renderContentHtml(
+  content?: string | StrapiBlock[],
+  fallback: string = ""
+): string {
+  if (!content) {
+    return fallback
+      ? `<p class="leading-relaxed font-['Jost',sans-serif] text-xs sm:text-sm md:text-[15px] text-neutral-800">${fallback}</p>`
+      : "";
+  }
+  if (typeof content === "string") {
+    return `<p class="leading-relaxed font-['Jost',sans-serif] text-xs sm:text-sm md:text-[15px] text-neutral-800">${content}</p>`;
+  }
+  if (Array.isArray(content) && content.length > 0) {
+    const html = content.map(renderBlockToHtml).filter(Boolean).join("");
+    return html || (fallback ? `<p class="leading-relaxed font-['Jost',sans-serif] text-xs sm:text-sm md:text-[15px] text-neutral-800">${fallback}</p>` : "");
+  }
+  return fallback
+    ? `<p class="leading-relaxed font-['Jost',sans-serif] text-xs sm:text-sm md:text-[15px] text-neutral-800">${fallback}</p>`
+    : "";
+}
+
+function findPanel(
+  tag: string,
+  index: number,
+  fallback: ContentPanelData
+): ContentPanelData {
+  const byTag = contents.find(
+    (p) => (p.tag || "").toLowerCase().trim() === tag.toLowerCase().trim()
+  );
+  if (byTag) return byTag;
+
+  const byTitle = contents.find(
+    (p) => (p.title || "").toLowerCase().trim() === tag.toLowerCase().trim()
+  );
+  if (byTitle) return byTitle;
+
+  return contents[index] || fallback;
+}
+
+const panel1 = findPanel("panel1", 0, {
+  tag: "01 // BIO",
+  title: "BACKGROUND",
+  content: "A human, self-taught, passionate freelance illustrator based in Asia with a unique blend of Japanese aesthetics and modern trends.",
+});
+
+const panel2 = findPanel("panel2", 1, {
+  tag: "02 // EXP",
+  title: "EXPERIENCE",
+  content: "Specializing in dynamic character art and conceptual designs, I bring stories and visions to life with mono-style storytelling.",
+});
+
+const panel3 = findPanel("panel3", 2, {
+  tag: "03 // YEARS",
+  title: "ACTIVE YEARS",
+  content: "Dedicated to the craft of manga-inspired digital illustration and character conceptualization.",
+});
+
+const panel4 = findPanel("panel4", 3, {
+  tag: "04 // WORK",
+  title: "LATEST WORK",
+  content: "Continuous explorations into expressive visual narratives and distinctive styling.",
+});
+
+const panel5 = findPanel("panel5", 4, {
+  tag: "CLIMAX",
+  title: "TO BE CONTINUED...",
+  content: "Evolving continuously through every story, sketch, and published panel.",
+});
 ---
 
 <section
@@ -15,56 +147,278 @@ import orekiFull from "../../assets/images/Houtarou-cutout-full.png";
   <span data-pagefind-meta="title" style="display: none;">About</span>
 
   <!-- Section Header Bar -->
-  <div class="relative z-10 px-4 sm:px-6 pt-16 md:pt-4 pb-3 sm:pb-4 flex items-center justify-between shrink-0 bg-transparent">
-    <div class="flex items-center gap-3">
-      <span class="text-xs font-mono font-bold tracking-widest uppercase bg-black text-white px-2 py-0.5">
-        Ch. 01
-      </span>
-      <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight uppercase">
-        About
-      </h2>
-    </div>
-    <span class="text-xs font-mono text-neutral-500 uppercase tracking-widest hidden sm:inline">
-      Ai Eien / Story & Bio
-    </span>
-  </div>
+  <Header
+    chapter="Ch. 01"
+    label="About"
+    caption="Ai Eien / Story & Bio"
+  />
 
   <!-- Content Area -->
   <div class="relative z-10 flex-1 w-full min-h-0 overflow-hidden p-3 sm:p-4 md:p-6 flex items-center justify-center">
     <!-- Responsive Grid: 2 columns x 4 rows on mobile, 6 columns x 6 rows on desktop -->
     <div class="relative z-10 w-full h-full grid grid-cols-2 grid-rows-4 md:grid-cols-6 md:grid-rows-6 gap-2 sm:gap-3">
       <!-- Top Panel 1 (spans full width on mobile, 4 cols & 2 rows on desktop) -->
-      <div class="col-span-2 row-span-1 md:col-span-4 md:row-span-2 md:col-start-1 md:row-start-1 border-2 border-black bg-white overflow-hidden p-3 sm:p-4">
-        <p class="font-black text-lg sm:text-xl">PANEL 1</p>
+      <div class="col-span-2 row-span-1 md:col-span-4 md:row-span-2 md:col-start-1 md:row-start-1 border-2 border-black bg-white overflow-hidden p-3 sm:p-4 flex flex-col gap-2 relative">
+        <div class="flex items-center justify-between gap-2 border-b border-neutral-200 pb-1.5 shrink-0">
+          <div class="flex items-center gap-2 min-w-0">
+            {panel1?.tag && (
+              <span class="text-[10px] sm:text-xs font-mono font-bold tracking-widest uppercase bg-black text-white px-2 py-0.5 inline-block shrink-0">
+                {panel1.tag}
+              </span>
+            )}
+            {panel1?.title && (
+              <h3 class="font-bold font-['Jost',sans-serif] text-sm sm:text-base md:text-lg uppercase tracking-wider text-black truncate">
+                {panel1.title}
+              </h3>
+            )}
+          </div>
+          <span class="text-[10px] font-mono text-neutral-400 select-none hidden sm:inline shrink-0">
+            // 01
+          </span>
+        </div>
+        <div
+          class="flex-1 min-h-0 overflow-y-auto panel-scroll pr-1 space-y-2 select-none cursor-default"
+        >
+          <Fragment set:html={renderContentHtml(panel1?.content)} />
+        </div>
       </div>
 
       <!-- Tall Panel 2 (below Panel 1 on right on mobile, right tall panel on desktop) -->
-      <div class="col-start-2 row-start-2 row-span-2 col-span-1 md:col-start-5 md:row-start-1 md:col-span-2 md:row-span-4 border-2 border-black bg-white overflow-hidden p-3 sm:p-4">
-        <p class="font-black text-lg sm:text-xl">PANEL 2</p>
+      <div class="col-start-2 row-start-2 row-span-2 col-span-1 md:col-start-5 md:row-start-1 md:col-span-2 md:row-span-4 border-2 border-black bg-white overflow-hidden p-3 sm:p-4 flex flex-col gap-2 relative">
+        <div class="flex items-center justify-between gap-2 border-b border-neutral-200 pb-1.5 shrink-0">
+          <div class="flex items-center gap-2 min-w-0">
+            {panel2?.tag && (
+              <span class="text-[10px] sm:text-xs font-mono font-bold tracking-widest uppercase bg-black text-white px-2 py-0.5 inline-block shrink-0">
+                {panel2.tag}
+              </span>
+            )}
+            {panel2?.title && (
+              <h3 class="font-bold font-['Jost',sans-serif] text-sm sm:text-base md:text-lg uppercase tracking-wider text-black truncate">
+                {panel2.title}
+              </h3>
+            )}
+          </div>
+          <span class="text-[10px] font-mono text-neutral-400 select-none hidden sm:inline shrink-0">
+            // 02
+          </span>
+        </div>
+        <div
+          class="flex-1 min-h-0 overflow-y-auto panel-scroll pr-1 space-y-2 select-none cursor-default"
+        >
+          <Fragment set:html={renderContentHtml(panel2?.content)} />
+        </div>
+      </div>
 
+      <!-- Panel 3 (stacked top-left on mobile, mid-left 1 on desktop) -->
+      <div class="col-start-1 row-start-2 col-span-1 row-span-1 md:col-start-1 md:row-start-3 md:col-span-2 md:row-span-2 border-2 border-black bg-white overflow-hidden p-3 sm:p-4 flex flex-col gap-2 relative">
+        <div class="flex items-center justify-between gap-2 border-b border-neutral-200 pb-1.5 shrink-0">
+          <div class="flex items-center gap-2 min-w-0">
+            {panel3?.tag && (
+              <span class="text-[10px] sm:text-xs font-mono font-bold tracking-widest uppercase bg-black text-white px-2 py-0.5 inline-block shrink-0">
+                {panel3.tag}
+              </span>
+            )}
+            {panel3?.title && (
+              <h3 class="font-bold font-['Jost',sans-serif] text-xs sm:text-sm md:text-base uppercase tracking-wider text-black truncate">
+                {panel3.title}
+              </h3>
+            )}
+          </div>
+          <span class="text-[10px] font-mono text-neutral-400 select-none hidden sm:inline shrink-0">
+            // 03
+          </span>
+        </div>
+        <div
+          class="flex-1 min-h-0 overflow-y-auto panel-scroll pr-1 space-y-2 select-none cursor-default"
+        >
+          <Fragment set:html={renderContentHtml(panel3?.content)} />
+        </div>
+      </div>
+
+      <!-- Panel 4 (stacked bottom-left on mobile, mid-left 2 on desktop) -->
+      <div class="col-start-1 row-start-3 col-span-1 row-span-1 md:col-start-3 md:row-start-3 md:col-span-2 md:row-span-2 border-2 border-black bg-white overflow-hidden p-3 sm:p-4 flex flex-col gap-2 relative">
+        <div class="flex items-center justify-between gap-2 border-b border-neutral-200 pb-1.5 shrink-0">
+          <div class="flex items-center gap-2 min-w-0">
+            {panel4?.tag && (
+              <span class="text-[10px] sm:text-xs font-mono font-bold tracking-widest uppercase bg-black text-white px-2 py-0.5 inline-block shrink-0">
+                {panel4.tag}
+              </span>
+            )}
+            {panel4?.title && (
+              <h3 class="font-bold font-['Jost',sans-serif] text-xs sm:text-sm md:text-base uppercase tracking-wider text-black truncate">
+                {panel4.title}
+              </h3>
+            )}
+          </div>
+          <span class="text-[10px] font-mono text-neutral-400 select-none hidden sm:inline shrink-0">
+            // 04
+          </span>
+        </div>
+        <div
+          class="flex-1 min-h-0 overflow-y-auto panel-scroll pr-1 space-y-2 select-none cursor-default"
+        >
+          <Fragment set:html={renderContentHtml(panel4?.content)} />
+        </div>
+      </div>
+
+      <!-- Full-width banner Climax Panel (spans 2 cols on mobile, 6 cols on desktop) -->
+      <div class="col-start-1 row-start-4 col-span-2 row-span-1 md:col-start-1 md:row-start-5 md:col-span-6 md:row-span-2 border-2 border-black bg-white overflow-hidden p-3 sm:p-4 flex flex-col gap-2 relative">
+        <div class="flex items-center justify-between gap-2 border-b border-neutral-200 pb-1.5 shrink-0">
+          <div class="flex items-center gap-2 min-w-0">
+            {panel5?.tag && (
+              <span class="text-[10px] sm:text-xs font-mono font-bold tracking-widest uppercase bg-black text-white px-2 py-0.5 inline-block shrink-0">
+                {panel5.tag}
+              </span>
+            )}
+            {panel5?.title && (
+              <h3 class="font-bold font-['Jost',sans-serif] text-sm sm:text-base md:text-lg uppercase tracking-wider text-black truncate">
+                {panel5.title}
+              </h3>
+            )}
+          </div>
+          <span class="text-[10px] font-mono text-neutral-400 select-none hidden sm:inline shrink-0">
+            // 05
+          </span>
+        </div>
+        <div
+          class="flex-1 min-h-0 overflow-y-auto panel-scroll pr-1 space-y-2 md:max-w-2/3 select-none cursor-default"
+        >
+          <Fragment set:html={renderContentHtml(panel5?.content)} />
+        </div>
+      </div>
+
+      <!-- Character Pop-out (Overlays on top of all panels) -->
+      {heroImageUrl ? (
+        <img
+          src={heroImageUrl}
+          alt={hero?.image?.alternativeText || "Character Pop-out"}
+          class="absolute -bottom-6 -right-6 h-full w-auto max-w-none z-30 pointer-events-none drop-shadow-[8px_8px_0px_rgba(0,0,0,1)]"
+        />
+      ) : (
         <Image
           src={panelImgTop}
           alt="Character Pop-out"
           class="absolute -bottom-6 -right-6 h-full w-auto max-w-none z-30 pointer-events-none drop-shadow-[8px_8px_0px_rgba(0,0,0,1)]"
         />
-      </div>
-
-      <!-- Panel 3 (stacked top-left on mobile, mid-left 1 on desktop) -->
-      <div class="col-start-1 row-start-2 col-span-1 row-span-1 md:col-start-1 md:row-start-3 md:col-span-2 md:row-span-2 border-2 border-black bg-white overflow-hidden p-3 sm:p-4">
-        <p class="font-bold text-sm sm:text-base">PANEL 3</p>
-      </div>
-
-      <!-- Panel 4 (stacked bottom-left on mobile, mid-left 2 on desktop) -->
-      <div class="col-start-1 row-start-3 col-span-1 row-span-1 md:col-start-3 md:row-start-3 md:col-span-2 md:row-span-2 border-2 border-black bg-white overflow-hidden p-3 sm:p-4">
-        <p class="font-bold text-sm sm:text-base">PANEL 4</p>
-      </div>
-
-      <!-- Full-width banner Climax Panel (spans 2 cols on mobile, 6 cols on desktop) -->
-      <div class="col-start-1 row-start-4 col-span-2 row-span-1 md:col-start-1 md:row-start-5 md:col-span-6 md:row-span-2 border-2 border-black bg-white overflow-hidden p-3 sm:p-4">
-        <p class="font-black text-xl sm:text-2xl">CLIMAX PANEL</p>
-      </div>
+      )}
     </div>
   </div>
 </section>
 
+<script>
+  function initAboutPanelScroll() {
+    const panels = document.querySelectorAll<HTMLElement>('#about .panel-scroll');
+
+    panels.forEach((panel) => {
+      // Helper to check if text is longer than the panel / overflowing
+      const checkOverflow = () => {
+        const hasOverflow = panel.scrollHeight > panel.clientHeight + 2;
+        if (hasOverflow) {
+          panel.style.cursor = 'grab';
+          panel.setAttribute('data-lenis-prevent', '');
+        } else {
+          panel.style.cursor = 'default';
+          panel.removeAttribute('data-lenis-prevent');
+        }
+        return hasOverflow;
+      };
+
+      // 1. Wheel isolation: only scroll panel vertically if it has overflow
+      panel.addEventListener(
+        'wheel',
+        (e: WheelEvent) => {
+          if (checkOverflow()) {
+            e.stopPropagation();
+            panel.scrollTop += e.deltaY;
+            e.preventDefault();
+          }
+        },
+        { passive: false }
+      );
+
+      // 2. Mouse Drag-to-Scroll: only active when content overflows
+      let isDragging = false;
+      let startY = 0;
+      let startScrollTop = 0;
+
+      panel.addEventListener('mousedown', (e: MouseEvent) => {
+        if (e.button !== 0) return; // Only left click
+        if (!checkOverflow()) return; // Don't drag if text fits without scrolling
+
+        isDragging = true;
+        startY = e.clientY;
+        startScrollTop = panel.scrollTop;
+        panel.style.cursor = 'grabbing';
+      });
+
+      window.addEventListener('mousemove', (e: MouseEvent) => {
+        if (!isDragging) return;
+        e.preventDefault();
+        const deltaY = e.clientY - startY;
+        panel.scrollTop = startScrollTop - deltaY;
+      });
+
+      const stopDrag = () => {
+        if (!isDragging) return;
+        isDragging = false;
+        checkOverflow();
+      };
+
+      window.addEventListener('mouseup', stopDrag);
+      panel.addEventListener('mouseleave', (e: MouseEvent) => {
+        // If mouse leaves with button released
+        if (e.buttons === 0) stopDrag();
+      });
+
+      // Observe element resize (content changes, window resizing)
+      if (typeof ResizeObserver !== 'undefined') {
+        const ro = new ResizeObserver(() => checkOverflow());
+        ro.observe(panel);
+        if (panel.firstElementChild) {
+          ro.observe(panel.firstElementChild);
+        }
+      }
+      checkOverflow();
+    });
+  }
+
+  // Initialize on page load and dynamic transitions
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initAboutPanelScroll);
+  } else {
+    initAboutPanelScroll();
+  }
+
+  window.addEventListener('load', initAboutPanelScroll);
+  window.addEventListener('resize', initAboutPanelScroll);
+</script>
+
+<style is:global>
+  /* Completely hide scrollbars and arrows while retaining smooth scroll ability */
+  .panel-scroll,
+  .no-scrollbar {
+    -ms-overflow-style: none !important; /* IE and Edge */
+    scrollbar-width: none !important; /* Firefox and modern browsers */
+    overscroll-behavior: contain;
+  }
+  .panel-scroll::-webkit-scrollbar,
+  .no-scrollbar::-webkit-scrollbar {
+    display: none !important; /* Chrome, Safari, Brave, Edge */
+    width: 0 !important;
+    height: 0 !important;
+    background: transparent !important;
+  }
+  .panel-scroll::-webkit-scrollbar-button,
+  .no-scrollbar::-webkit-scrollbar-button {
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
+  }
+  .panel-scroll::-webkit-scrollbar-track,
+  .no-scrollbar::-webkit-scrollbar-track,
+  .panel-scroll::-webkit-scrollbar-thumb,
+  .no-scrollbar::-webkit-scrollbar-thumb {
+    display: none !important;
+  }
+</style>
 

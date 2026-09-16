@@ -3,6 +3,8 @@ import type { WorkData } from "@/types/work";
 import type { ContactData } from "@/types/strapi-connect";
 import type { SectionData } from "@/types/strapi-sections";
 import type { HeroData } from "@/types/hero";
+import type { InfoData } from "@/types/info-data";
+import type { AboutData } from "@/types/about";
 
 function getStrapiBaseUrl(): string {
   return (
@@ -226,7 +228,7 @@ export async function getHero(sectionId?: string): Promise<HeroData | null> {
 
   const target = sectionId.toLowerCase().trim();
   const matched = heroes.find(
-    (h) => (h.sectionId || "").toLowerCase().trim() === target
+    (h) => (h.sectionId || "").toLowerCase().trim() === target,
   );
   return matched || heroes[0];
 }
@@ -238,22 +240,108 @@ export async function getHero(sectionId?: string): Promise<HeroData | null> {
 export function isSectionEnabled(
   sections: SectionData[] | undefined | null,
   sectionId: string,
-  aliases: string[] = []
+  aliases: string[] = [],
 ): boolean {
   if (!sections || !Array.isArray(sections) || sections.length === 0) {
     return false;
   }
 
   const targets = [sectionId, ...aliases].map((t) =>
-    t.toLowerCase().replace(/^#/, "").trim()
+    t.toLowerCase().replace(/^#/, "").trim(),
   );
 
   const found = sections.find((s) => {
-    const rawId = s.sectionId || (s as unknown as { idDiv?: string }).idDiv || "";
+    const rawId =
+      s.sectionId || (s as unknown as { idDiv?: string }).idDiv || "";
     const id = rawId.toLowerCase().replace(/^#/, "").trim();
     return targets.includes(id);
   });
 
   return Boolean(found?.isEnabled);
+}
+
+export async function getInfos(): Promise<InfoData[]> {
+  const strapiUrl = getStrapiBaseUrl();
+
+  try {
+    const res = await fetch(
+      `${strapiUrl}/api/infos?populate=*&sort=createdAt:asc`,
+      {
+        headers: getStrapiHeaders(),
+      },
+    );
+
+    if (!res.ok) {
+      if (res.status === 401 || res.status === 403) {
+        console.error(
+          `Strapi API Authentication Error (${res.status} ${res.statusText}): Access denied. Please ensure STRAPI_API_TOKEN is set in your .env file and has read permissions for Infos.`,
+        );
+      } else {
+        console.error(
+          `Failed to fetch infos from Strapi: ${res.status} ${res.statusText}`,
+        );
+      }
+      return [];
+    }
+
+    const json = await res.json();
+    const data: InfoData[] = json.data || [];
+    return data;
+  } catch (error) {
+    console.error("Error fetching Strapi infos: ", error);
+    return [];
+  }
+}
+
+export async function getInfo(
+  name?: string,
+  type?: string,
+): Promise<InfoData | null> {
+  const infos = await getInfos();
+  if (infos.length === 0) return null;
+  if (!name && !type) return infos[0];
+
+  const targetName = name ? name.toLowerCase().trim() : "";
+  const targetType = type ? type.toLowerCase().trim() : "";
+  const matched = infos.find((i) => {
+    const nameMatch =
+      !targetName || (i.name || "").toLowerCase().trim() === targetName;
+    const typeMatch =
+      !targetType || (i.type || "").toLowerCase().trim() === targetType;
+    return nameMatch && typeMatch;
+  });
+  return matched || null;
+}
+
+export async function getAboutPage(): Promise<AboutData | null> {
+  const strapiUrl = getStrapiBaseUrl();
+
+  try {
+    const response = await fetch(
+      `${strapiUrl}/api/about?populate[contents][populate]=*`,
+      {
+        headers: getStrapiHeaders(),
+      },
+    );
+
+    if (!response.ok) {
+      if (response.status === 401 || response.status === 403) {
+        console.error(
+          `Strapi API Authentication Error (${response.status} ${response.statusText}): Access denied for About single type.`,
+        );
+      } else {
+        console.error(
+          `Failed to fetch about page from Strapi: ${response.status} ${response.statusText}`,
+        );
+      }
+      return null;
+    }
+
+    const json = await response.json();
+    return json.data || null;
+  } catch (error) {
+    console.error("Failed to fetch about page:", error);
+    return null;
+  }
 }
 
