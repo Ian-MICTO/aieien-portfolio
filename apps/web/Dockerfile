@@ -19,19 +19,19 @@ ENV STRAPI_API_TOKEN=$STRAPI_API_TOKEN
 
 RUN pnpm build
 
-FROM node:20-alpine AS runner
+FROM nginx:alpine AS runner
 
-RUN npm install -g pnpm@latest
+COPY --from=build /app/dist /usr/share/nginx/html
 
-WORKDIR /app
+RUN printf 'server {\n\
+    listen 4321;\n\
+    location / {\n\
+        root /usr/share/nginx/html;\n\
+        index index.html index.htm;\n\
+        try_files $uri $uri/ $uri.html /index.html;\n\
+    }\n\
+}\n' > /etc/nginx/conf.d/default.conf
 
-COPY --from=build /app/package.json ./package.json
-COPY --from=build /app/node_modules ./node_modules
-COPY --from=build /app/dist ./dist
-COPY --from=build /app/astro.config.mjs ./astro.config.mjs
-
-ENV HOST=0.0.0.0
-ENV PORT=4321
 EXPOSE 4321
 
-CMD ["sh", "-c", "pnpm preview --host 0.0.0.0 --port ${PORT:-4321}"]
+CMD ["nginx", "-g", "daemon off;"]
