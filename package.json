@@ -12,7 +12,9 @@
   "pnpm": {
     "onlyBuiltDependencies": [
       "better-sqlite3",
-      "sharp"
+      "sharp",
+      "esbuild",
+      "@swc/core"
     ]
   },
   "devDependencies": {

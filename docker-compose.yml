@@ -6,19 +6,21 @@ services:
     restart: unless-stopped
     environment:
       POSTGRES_DB: strapi
-      POSTGRES_USER: strapi
+      POSTGRES_USER: postgres
       POSTGRES_PASSWORD: strapi_local_password
     ports:
-      - "5432:5432"
+      - "5433:5432"
     volumes:
       - strapi-postgres-data:/var/lib/postgresql/data
+      - ./docker-init-db:/docker-entrypoint-initdb.d
     networks:
       - aieien-network
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U strapi -d strapi"]
-      interval: 5s
+      test: ["CMD-SHELL", "pg_isready -U postgres -d strapi"]
+      interval: 3s
       timeout: 5s
-      retries: 5
+      retries: 10
+      start_period: 15s
 
   # 2. Strapi Backend Web Service Container (Local)
   backend:
@@ -31,22 +33,22 @@ services:
       postgres:
         condition: service_healthy
     environment:
-      NODE_ENV: development
+      NODE_ENV: production
       HOST: 0.0.0.0
       PORT: 1337
       DATABASE_CLIENT: postgres
       DATABASE_HOST: postgres
       DATABASE_PORT: 5432
       DATABASE_NAME: strapi
-      DATABASE_USERNAME: strapi
+      DATABASE_USERNAME: postgres
       DATABASE_PASSWORD: strapi_local_password
       DATABASE_SSL: "false"
-      APP_KEYS: "localAppKey1,localAppKey2,localAppKey3,localAppKey4"
-      API_TOKEN_SALT: "localApiTokenSalt123"
-      ADMIN_JWT_SECRET: "localAdminJwtSecret123"
-      JWT_SECRET: "localJwtSecret123"
-      TRANSFER_TOKEN_SALT: "localTransferTokenSalt123"
-      ENCRYPTION_KEY: "localEncryptionKey1234567890"
+      APP_KEYS: "uXKf0hQE2HLA2y6PFTUerw==,zfRQ2pOK/exgBpS+OMI6tQ==,qM5VX0ghmJuHyWk5u509gQ==,z/2QwCOXpYrFgOCzCnFixA=="
+      API_TOKEN_SALT: "DrwUlObq62s+yZWwEY/bbQ=="
+      ADMIN_JWT_SECRET: "mQnjwuJXbS3u3N5qm4r5Yw=="
+      JWT_SECRET: "6FUtVh4oc2+HBrSshwAGMg=="
+      TRANSFER_TOKEN_SALT: "Zdk07/k20cocfKLVqLw7RA=="
+      ENCRYPTION_KEY: "+dwY0TjzDMNFjDlnmVGKdg=="
     ports:
       - "1337:1337"
     volumes:
@@ -62,12 +64,15 @@ services:
       dockerfile: Dockerfile
       args:
         STRAPI_URL: http://backend:1337
+        STRAPI_API_TOKEN: a9cb25b35e220ec3b8afc9535357c19c7bf27eb5ae155b13565d78d8ab63ef1ef1708c8357058e80c3fb41ae79ebb73b4d52273784e2042608fd614f7aa64bc43f3d76470e97f2d78581f4f6f16243704599b675895ada0e61e1b6ad7ff118c241e372eb1a295db3d39a87a1ac88ab40d90cd737e4668f91f78a7c2782e4d5aa
     container_name: aieien-frontend
     restart: unless-stopped
     depends_on:
       - backend
     environment:
       STRAPI_URL: http://backend:1337
+      PUBLIC_STRAPI_URL: http://localhost:1337
+      STRAPI_API_TOKEN: a9cb25b35e220ec3b8afc9535357c19c7bf27eb5ae155b13565d78d8ab63ef1ef1708c8357058e80c3fb41ae79ebb73b4d52273784e2042608fd614f7aa64bc43f3d76470e97f2d78581f4f6f16243704599b675895ada0e61e1b6ad7ff118c241e372eb1a295db3d39a87a1ac88ab40d90cd737e4668f91f78a7c2782e4d5aa
     ports:
       - "4321:4321"
     networks:
@@ -79,4 +84,5 @@ networks:
 
 volumes:
   strapi-postgres-data:
+
 

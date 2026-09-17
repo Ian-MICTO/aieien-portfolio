@@ -9,7 +9,9 @@ import type { AboutData } from "@/types/about";
 function getStrapiBaseUrl(): string {
   return (
     import.meta.env.STRAPI_URL ||
+    process.env.STRAPI_URL ||
     import.meta.env.PUBLIC_STRAPI_URL ||
+    process.env.PUBLIC_STRAPI_URL ||
     "http://localhost:1337"
   );
 }
@@ -17,8 +19,9 @@ function getStrapiBaseUrl(): string {
 function getStrapiHeaders(): Record<string, string> {
   const token =
     import.meta.env.STRAPI_API_TOKEN ||
-    import.meta.env.STRAPI_TOKEN ||
     process.env.STRAPI_API_TOKEN ||
+    import.meta.env.STRAPI_TOKEN ||
+    process.env.STRAPI_TOKEN ||
     "";
 
   const headers: Record<string, string> = {
@@ -34,11 +37,29 @@ function getStrapiHeaders(): Record<string, string> {
 
 export function getStrapiMediaUrl(url?: string | null): string {
   if (!url) return "";
-  if (url.startsWith("http://") || url.startsWith("https://")) {
-    return url;
+  let publicStrapiUrl =
+    import.meta.env.PUBLIC_STRAPI_URL ||
+    process.env.PUBLIC_STRAPI_URL ||
+    import.meta.env.PUBLIC_URL ||
+    process.env.PUBLIC_URL ||
+    "http://localhost:1337";
+
+  // Prevent internal Docker network hostnames from leaking to client browsers
+  if (
+    publicStrapiUrl.includes("backend:") ||
+    publicStrapiUrl === "http://backend:1337"
+  ) {
+    publicStrapiUrl = "http://localhost:1337";
   }
-  const strapiUrl = getStrapiBaseUrl();
-  return `${strapiUrl}${url}`;
+
+  const cleanPublicBase = publicStrapiUrl.replace(/\/+$/, "");
+
+  if (url.startsWith("http://") || url.startsWith("https://")) {
+    // If URL contains internal container host (e.g. backend:1337), rewrite to public URL for browser
+    return url.replace(/^https?:\/\/backend(?::\d+)?/, cleanPublicBase);
+  }
+  const cleanPath = url.startsWith("/") ? url : `/${url}`;
+  return `${cleanPublicBase}${cleanPath}`;
 }
 
 export async function getStylePanels(): Promise<StylePanelData[]> {
