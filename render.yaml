@@ -49,13 +49,12 @@ services:
   - type: web
     name: aieien-frontend
     runtime: docker
-    buildCommand: pnpm --filter web build
-    staticPublishPath: ./apps/web/dist
+    dockerfilePath: ./apps/web/Dockerfile
+    dockerContext: ./apps/web
+    region: oregon
+    plan: free
     envVars:
-      - key: STRAPI_URL
-        fromService:
-          type: web
-          name: aieien-backend
-          property: host
+      - key: PUBLIC_STRAPI_URL
+        value: https://aieien-backend.onrender.com
       - key: STRAPI_API_TOKEN
         sync: false
