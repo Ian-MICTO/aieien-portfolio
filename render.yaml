@@ -48,11 +48,10 @@ services:
   # 2. Astro Frontend Static Site
   - type: web
     name: aieien-frontend
-    runtime: docker
-    dockerfilePath: ./apps/web/Dockerfile
-    dockerContext: ./apps/web
-    region: oregon
-    plan: free
+    runtime: static
+    rootDir: apps/web
+    buildCommand: pnpm install && pnpm build
+    staticPublishPath: dist
     envVars:
       - key: PUBLIC_STRAPI_URL
         value: https://aieien-backend.onrender.com
