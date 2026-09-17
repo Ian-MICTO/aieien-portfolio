@@ -55,5 +55,7 @@ services:
     envVars:
       - key: PUBLIC_STRAPI_URL
         value: https://aieien-backend.onrender.com
+      - key: STRAPI_URL
+        value: https://aieien-backend.onrender.com
       - key: STRAPI_API_TOKEN
         sync: false
