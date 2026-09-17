@@ -7,14 +7,15 @@ import type { InfoData } from "@/types/info-data";
 import type { AboutData } from "@/types/about";
 
 function getStrapiBaseUrl(): string {
-  return (
+  const url =
     import.meta.env.STRAPI_URL ||
     process.env.STRAPI_URL ||
     import.meta.env.PUBLIC_STRAPI_URL ||
     process.env.PUBLIC_STRAPI_URL ||
-    "http://localhost:1337"
-  );
+    "http://localhost:1337";
+  return url.replace(/\/+$/, "");
 }
+
 
 function getStrapiHeaders(): Record<string, string> {
   const token =
