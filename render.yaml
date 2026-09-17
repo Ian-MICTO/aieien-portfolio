@@ -48,7 +48,7 @@ services:
   # 2. Astro Frontend Static Site
   - type: web
     name: aieien-frontend
-    runtime: static
+    runtime: docker
     buildCommand: pnpm --filter web build
     staticPublishPath: ./apps/web/dist
     envVars:
@@ -59,4 +59,3 @@ services:
           property: host
       - key: STRAPI_API_TOKEN
         sync: false
-
