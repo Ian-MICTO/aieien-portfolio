@@ -15,6 +15,7 @@ const config: Core.Config.Middlewares = [
             'data:',
             'blob:',
             'market-assets.strapi.io',
+            'res.cloudinary.com',
             '*.onrender.com',
           ],
           'media-src': [
@@ -22,6 +23,7 @@ const config: Core.Config.Middlewares = [
             'data:',
             'blob:',
             'market-assets.strapi.io',
+            'res.cloudinary.com',
             '*.onrender.com',
           ],
           upgradeInsecureRequests: null,

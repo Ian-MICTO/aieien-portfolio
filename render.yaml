@@ -46,6 +46,12 @@ services:
         generateValue: true
       - key: ENCRYPTION_KEY
         generateValue: true
+      - key: CLOUDINARY_NAME
+        value: rceo6lzn
+      - key: CLOUDINARY_KEY
+        value: "44926379521625"
+      - key: CLOUDINARY_SECRET
+        value: PJ7AUgHCAZaluiyJp5N2_YESxl0
 
   # 2. Astro Frontend Static Site
   - type: web

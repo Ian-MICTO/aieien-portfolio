@@ -49,6 +49,9 @@ services:
       JWT_SECRET: "6FUtVh4oc2+HBrSshwAGMg=="
       TRANSFER_TOKEN_SALT: "Zdk07/k20cocfKLVqLw7RA=="
       ENCRYPTION_KEY: "+dwY0TjzDMNFjDlnmVGKdg=="
+      CLOUDINARY_NAME: "rceo6lzn"
+      CLOUDINARY_KEY: "44926379521625"
+      CLOUDINARY_SECRET: "PJ7AUgHCAZaluiyJp5N2_YESxl0"
     ports:
       - "1337:1337"
     volumes:
