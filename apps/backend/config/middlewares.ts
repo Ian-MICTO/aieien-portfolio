@@ -1,28 +1,30 @@
-import type { Core } from '@strapi/strapi';
+import type { Core } from "@strapi/strapi";
 
 const config: Core.Config.Middlewares = [
-  'strapi::logger',
-  'strapi::errors',
+  "strapi::logger",
+  "strapi::errors",
   {
-    name: 'strapi::security',
+    name: "strapi::security",
     config: {
       contentSecurityPolicy: {
         useDefaults: true,
         directives: {
-          'connect-src': ["'self'", 'https:'],
-          'img-src': [
+          "connect-src": ["'self'", "https:"],
+          "img-src": [
             "'self'",
-            'data:',
-            'blob:',
-            'market-assets.strapi.io',
-            '*.onrender.com',
+            "data:",
+            "blob:",
+            "market-assets.strapi.io",
+            "*.onrender.com",
+            "res.cloudinary.com",
           ],
-          'media-src': [
+          "media-src": [
             "'self'",
-            'data:',
-            'blob:',
-            'market-assets.strapi.io',
-            '*.onrender.com',
+            "data:",
+            "blob:",
+            "market-assets.strapi.io",
+            "*.onrender.com",
+            "res.cloudinary.com",
           ],
           upgradeInsecureRequests: null,
         },
@@ -30,20 +32,19 @@ const config: Core.Config.Middlewares = [
     },
   },
   {
-    name: 'strapi::cors',
+    name: "strapi::cors",
     config: {
-      origin: ['*'],
-      headers: ['*'],
-      methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'HEAD', 'OPTIONS'],
+      origin: ["*"],
+      headers: ["*"],
+      methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS"],
     },
   },
-  'strapi::poweredBy',
-  'strapi::query',
-  'strapi::body',
-  'strapi::session',
-  'strapi::favicon',
-  'strapi::public',
+  "strapi::poweredBy",
+  "strapi::query",
+  "strapi::body",
+  "strapi::session",
+  "strapi::favicon",
+  "strapi::public",
 ];
 
 export default config;
-
