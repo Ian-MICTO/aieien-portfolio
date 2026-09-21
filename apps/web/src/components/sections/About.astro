@@ -106,32 +106,34 @@ function findPanel(
   return contents[index] || fallback;
 }
 
+const panelNumbers = [1, 2, 3, 4, 5];
+
 const panel1 = findPanel("panel1", 0, {
-  tag: "01 // BIO",
+  tag: "panel1",
   title: "BACKGROUND",
   content: "A human, self-taught, passionate freelance illustrator based in Asia with a unique blend of Japanese aesthetics and modern trends.",
 });
 
 const panel2 = findPanel("panel2", 1, {
-  tag: "02 // EXP",
+  tag: "panel2",
   title: "EXPERIENCE",
   content: "Specializing in dynamic character art and conceptual designs, I bring stories and visions to life with mono-style storytelling.",
 });
 
 const panel3 = findPanel("panel3", 2, {
-  tag: "03 // YEARS",
+  tag: "panel3",
   title: "ACTIVE YEARS",
   content: "Dedicated to the craft of manga-inspired digital illustration and character conceptualization.",
 });
 
 const panel4 = findPanel("panel4", 3, {
-  tag: "04 // WORK",
+  tag: "panel4",
   title: "LATEST WORK",
   content: "Continuous explorations into expressive visual narratives and distinctive styling.",
 });
 
 const panel5 = findPanel("panel5", 4, {
-  tag: "CLIMAX",
+  tag: "panel5",
   title: "TO BE CONTINUED...",
   content: "Evolving continuously through every story, sketch, and published panel.",
 });
@@ -163,7 +165,7 @@ const panel5 = findPanel("panel5", 4, {
           <div class="flex items-center gap-2 min-w-0">
             {panel1?.tag && (
               <span class="text-[10px] sm:text-xs font-mono font-bold tracking-widest uppercase bg-black text-white px-2 py-0.5 inline-block shrink-0">
-                {panel1.tag}
+                {panelNumbers[0]}
               </span>
             )}
             {panel1?.title && (
@@ -189,7 +191,7 @@ const panel5 = findPanel("panel5", 4, {
           <div class="flex items-center gap-2 min-w-0">
             {panel2?.tag && (
               <span class="text-[10px] sm:text-xs font-mono font-bold tracking-widest uppercase bg-black text-white px-2 py-0.5 inline-block shrink-0">
-                {panel2.tag}
+                {panelNumbers[1]}
               </span>
             )}
             {panel2?.title && (
@@ -215,7 +217,7 @@ const panel5 = findPanel("panel5", 4, {
           <div class="flex items-center gap-2 min-w-0">
             {panel3?.tag && (
               <span class="text-[10px] sm:text-xs font-mono font-bold tracking-widest uppercase bg-black text-white px-2 py-0.5 inline-block shrink-0">
-                {panel3.tag}
+                {panelNumbers[2]}
               </span>
             )}
             {panel3?.title && (
@@ -241,7 +243,7 @@ const panel5 = findPanel("panel5", 4, {
           <div class="flex items-center gap-2 min-w-0">
             {panel4?.tag && (
               <span class="text-[10px] sm:text-xs font-mono font-bold tracking-widest uppercase bg-black text-white px-2 py-0.5 inline-block shrink-0">
-                {panel4.tag}
+                {panelNumbers[3]}
               </span>
             )}
             {panel4?.title && (
@@ -267,7 +269,7 @@ const panel5 = findPanel("panel5", 4, {
           <div class="flex items-center gap-2 min-w-0">
             {panel5?.tag && (
               <span class="text-[10px] sm:text-xs font-mono font-bold tracking-widest uppercase bg-black text-white px-2 py-0.5 inline-block shrink-0">
-                {panel5.tag}
+                {panelNumbers[4]}
               </span>
             )}
             {panel5?.title && (
