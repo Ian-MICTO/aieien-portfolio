@@ -14,8 +14,13 @@ export default defineConfig({
       STRAPI_URL: envField.string({
         context: "server",
         access: "public",
-        // default: "http://localhost:1337",
         default: "https://aieien-backend.onrender.com",
+      }),
+      PUBLIC_STRAPI_URL: envField.string({
+        context: "client",
+        access: "public",
+        default: "https://aieien-backend.onrender.com",
+        optional: true,
       }),
       STRAPI_API_TOKEN: envField.string({
         context: "server",

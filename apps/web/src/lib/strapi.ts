@@ -8,14 +8,17 @@ import type { AboutData } from "@/types/about";
 
 function getStrapiBaseUrl(): string {
   const url =
-    import.meta.env.STRAPI_URL ||
-    process.env.STRAPI_URL ||
     import.meta.env.PUBLIC_STRAPI_URL ||
     process.env.PUBLIC_STRAPI_URL ||
-    "http://localhost:1337";
+    import.meta.env.STRAPI_URL ||
+    process.env.STRAPI_URL ||
+    import.meta.env.PUBLIC_URL ||
+    process.env.PUBLIC_URL ||
+    (import.meta.env.PROD
+      ? "https://aieien-backend.onrender.com"
+      : "http://localhost:1337");
   return url.replace(/\/+$/, "");
 }
-
 
 function getStrapiHeaders(): Record<string, string> {
   const token =
@@ -38,29 +41,27 @@ function getStrapiHeaders(): Record<string, string> {
 
 export function getStrapiMediaUrl(url?: string | null): string {
   if (!url) return "";
-  let publicStrapiUrl =
-    import.meta.env.PUBLIC_STRAPI_URL ||
-    process.env.PUBLIC_STRAPI_URL ||
-    import.meta.env.PUBLIC_URL ||
-    process.env.PUBLIC_URL ||
-    "http://localhost:1337";
 
-  // Prevent internal Docker network hostnames from leaking to client browsers
-  if (
-    publicStrapiUrl.includes("backend:") ||
-    publicStrapiUrl === "http://backend:1337"
-  ) {
-    publicStrapiUrl = "http://localhost:1337";
-  }
+  const publicBase = getStrapiBaseUrl();
 
-  const cleanPublicBase = publicStrapiUrl.replace(/\/+$/, "");
-
+  // If already an absolute URL
   if (url.startsWith("http://") || url.startsWith("https://")) {
-    // If URL contains internal container host (e.g. backend:1337), rewrite to public URL for browser
-    return url.replace(/^https?:\/\/backend(?::\d+)?/, cleanPublicBase);
+    // If URL contains internal container host (e.g. backend:1337 or host.docker.internal:1337), rewrite to public URL for browser
+    if (
+      url.includes("backend:1337") ||
+      url.includes("host.docker.internal:1337")
+    ) {
+      return url.replace(
+        /^https?:\/\/(?:backend|host\.docker\.internal):1337/,
+        publicBase
+      );
+    }
+    return url;
   }
+
+  // If relative path (e.g. /uploads/hero.jpg)
   const cleanPath = url.startsWith("/") ? url : `/${url}`;
-  return `${cleanPublicBase}${cleanPath}`;
+  return `${publicBase}${cleanPath}`;
 }
 
 export async function getStylePanels(): Promise<StylePanelData[]> {
