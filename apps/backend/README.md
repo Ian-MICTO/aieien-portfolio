@@ -40,6 +40,11 @@ Strapi gives you many possible deployment options for your project including [St
 yarn strapi deploy
 ```
 
+## 📚 Strapi Collections & Data Guide
+
+For detailed schema documentation, JSON structures, and entry creation instructions for each collection/single type, see:
+👉 **[`STRAPI_COLLECTIONS_GUIDE.md`](../../STRAPI_COLLECTIONS_GUIDE.md)**
+
 ## 📚 Learn more
 
 - [Resource center](https://strapi.io/resource-center) - Strapi resource center.
@@ -59,3 +64,4 @@ Feel free to check out the [Strapi GitHub repository](https://github.com/strapi/
 ---
 
 <sub>🤫 Psst! [Strapi is hiring](https://strapi.io/careers).</sub>
+
